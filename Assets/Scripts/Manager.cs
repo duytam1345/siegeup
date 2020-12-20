@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 [System.Serializable]
@@ -33,29 +34,85 @@ public class Manager : MonoBehaviour
     public Text textMetal;
     public Text textSoldier;
 
+    public GameObject currentToBuild;
+    public bool firstMouseDown;
+
+    public GameObject btnCancelBuild;
+    public GameObject infoPanel;
+    public GameObject buildPanel;
+    public GameObject buildBtn;
+
+    public GameObject cam;
+
     private void Awake()
     {
-
         if (manager == null)
         {
             manager = this;
         }
+
+        cam = Camera.main.transform.parent.gameObject;
     }
 
     private void Update()
     {
+        MoveCamera();
+
+        if (currentToBuild)
+        {
+            if (!MouseOnUI())
+            {
+                RaycastHit hit;
+                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 1000, LayerMask.GetMask("Nav")))
+                {
+                    currentToBuild.transform.position = hit.point;
+                }
+            }
+        }
+
         if (Input.GetMouseButtonDown(0))
         {
+            if (MouseOnUI())
+            {
+                return;
+            }
             startPosMouseDown = Input.mousePosition;
         }
 
         if (Input.GetMouseButton(0))
         {
-            SetSelectionBox(Input.mousePosition);
+            if (startPosMouseDown != Vector2.zero && !currentToBuild)
+            {
+                SetSelectionBox(Input.mousePosition);
+            }
         }
 
         if (Input.GetMouseButtonUp(0))
         {
+            if (currentToBuild && !MouseOnUI())
+            {
+                if (firstMouseDown)
+                {
+                    firstMouseDown = false;
+                }
+                else
+                {
+                    if (currentToBuild.GetComponent<Building>().colliders.Count <= 0)
+                    {
+                        startPosMouseDown = Vector2.zero;
+
+                        currentToBuild.GetComponent<Building>().SetConstruct();
+
+                        GameObject g = Instantiate(Resources.Load("Construct/" + currentToBuild.GetComponent<Building>().n + "_2") as GameObject, currentToBuild.transform.position, Quaternion.identity);
+
+                        Destroy(currentToBuild);
+                        btnCancelBuild.SetActive(false);
+                        buildPanel.SetActive(true);
+                        return;
+                    }
+                }
+            }
+
             Vector2 endPosMouseDown = Input.mousePosition;
 
             //click
@@ -94,9 +151,9 @@ public class Manager : MonoBehaviour
                 listSelected.Clear();
 
 
-                Unit[] unitRts = FindObjectsOfType<Unit>();
+                UnitSoldier[] unitRts = FindObjectsOfType<UnitSoldier>();
 
-                List<Unit> units = new List<Unit>();
+                List<UnitSoldier> units = new List<UnitSoldier>();
 
 
                 Vector2 min = new Vector2(
@@ -127,6 +184,7 @@ public class Manager : MonoBehaviour
 
                 boxSelection.gameObject.SetActive(false);
             }
+            startPosMouseDown = Vector2.zero;
         }
     }
 
@@ -144,8 +202,13 @@ public class Manager : MonoBehaviour
         boxSelection.position = startPosMouseDown + new Vector2(width / 2, height / 2);
     }
 
-    void UnitSelect(List<Unit> units)
+    void UnitSelect(List<UnitSoldier> units)
     {
+        if(units.Count>0)
+        {
+            infoPanel.SetActive(true);
+        }
+
         foreach (var item in units)
         {
             item.OnSelect();
@@ -179,5 +242,109 @@ public class Manager : MonoBehaviour
     {
         GameObject g = Instantiate(Resources.Load("Soldier/Peasant") as GameObject, new Vector3(-7, 0, 0), Quaternion.identity);
         g.GetComponent<Unit>().SetMove(new Vector3(-7, 0, -2));
+    }
+
+    /// <summary>
+    /// Nhập tên, tạo.
+    /// </summary>
+    public void BuildConstruct(string n)
+    {
+        if (!currentToBuild)
+        {
+            currentToBuild = Instantiate(Resources.Load("Construct/" + n + "_1") as GameObject, Vector2.zero, Quaternion.identity);
+            currentToBuild.GetComponent<Building>().n = n;
+
+            btnCancelBuild.SetActive(true);
+            buildPanel.SetActive(false);
+            buildBtn.SetActive(false);
+
+            firstMouseDown = true;
+        }
+    }
+
+    public void BuildBtnOnClick()
+    {
+        buildBtn.SetActive(false);
+        buildPanel.SetActive(true);
+    }
+
+    public bool MouseOnUI()
+    {
+        EventSystem eventSystem = FindObjectOfType<EventSystem>();
+        PointerEventData pointerEventData = new PointerEventData(eventSystem);
+        pointerEventData.position = Input.mousePosition;
+
+        List<RaycastResult> results = new List<RaycastResult>();
+
+        EventSystem.current.RaycastAll(pointerEventData, results);
+
+        if (results.Count > 0)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    void MoveCamera()
+    {
+        if (Input.GetKey(KeyCode.Q))
+        {
+            Vector3 euler = cam.transform.eulerAngles;
+            euler.y -=1;
+
+            cam.transform.eulerAngles = euler;
+        }
+        if (Input.GetKey(KeyCode.E))
+        {
+            Vector3 euler = cam.transform.eulerAngles;
+            euler.y += 1;
+
+            cam.transform.eulerAngles = euler;
+        }
+
+        if(Input.GetKey(KeyCode.W))
+        {
+            Vector3 pos = cam.transform.position;
+            pos += cam.transform.forward * .5f;
+
+            cam.transform.position = pos;
+        }
+        if (Input.GetKey(KeyCode.S))
+        {
+            Vector3 pos = cam.transform.position;
+            pos -= cam.transform.forward * .5f;
+
+            cam.transform.position = pos;
+        }
+
+        if (Input.GetKey(KeyCode.A))
+        {
+            Vector3 pos = cam.transform.position;
+            pos -= cam.transform.right*.5f;
+
+            cam.transform.position = pos;
+        }
+
+        if (Input.GetKey(KeyCode.D))
+        {
+            Vector3 pos = cam.transform.position;
+            pos += cam.transform.right * .5f;
+
+            cam.transform.position = pos;
+        }
+    }
+
+    public void CancelBuild()
+    {
+        DestroyImmediate(currentToBuild);
+
+        btnCancelBuild.SetActive(false);
+        buildPanel.SetActive(true);
+    }
+
+    public void ClosePanelBtn(GameObject g)
+    {
+        g.SetActive(false);
+        buildBtn.SetActive(true);
     }
 }

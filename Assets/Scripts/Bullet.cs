@@ -11,24 +11,43 @@ public class Bullet : MonoBehaviour
 
     public Property property;
 
+    bool b;
+
     private void Update()
     {
-        if (unitTarget)
-        {
-            vTarget = unitTarget.transform.position;
-        }
-
-        if (Vector3.Distance(transform.position, vTarget) > .1f)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, vTarget, speed * Time.deltaTime);
-        }
-        else
+        if (!b)
         {
             if (unitTarget)
             {
-                unitTarget.TakeDamage(property);
+                vTarget = new Vector3(unitTarget.transform.position.x, transform.position.y, unitTarget.transform.position.z);
             }
-            Destroy(gameObject);
+
+            if (Vector3.Distance(transform.position, vTarget) > .1f)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, vTarget, speed * Time.deltaTime);
+            }
+            else
+            {
+                if (unitTarget)
+                {
+                    unitTarget.TakeDamage(property);
+                }
+                StopParticle();
+                Destroy(gameObject);
+                b = true;
+            }
+        }
+    }
+
+    void StopParticle()
+    {
+        foreach (Transform item in transform)
+        {
+            if(item.GetComponent<ParticleSystem>())
+            {
+                item.GetComponent<ParticleSystem>().Stop();
+                return;
+            }
         }
     }
 }

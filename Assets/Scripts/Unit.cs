@@ -79,6 +79,8 @@ public class Unit : MonoBehaviour
             meshRenderers.Add(item.GetComponent<MeshRenderer>());
         }
 
+        SetColorTeam();
+
         foreach (var item in FindObjectsOfType<CityHallConstruct>())
         {
             if (item._property.colorTeam == _property.colorTeam)
@@ -109,22 +111,38 @@ public class Unit : MonoBehaviour
 
     public void SetColorTeam()
     {
+        Material m = null;
+
         switch (_property.colorTeam)
         {
             case Team.Red:
+                m = Resources.Load("Material/Color/Red") as Material;
                 break;
             case Team.Green:
+                m = Resources.Load("Material/Color/Green") as Material;
                 break;
             case Team.Blue:
+                m = Resources.Load("Material/Color/Blue") as Material;
                 break;
             case Team.Yellow:
+                m = Resources.Load("Material/Color/Yellow") as Material;
                 break;
             case Team.Pink:
+                m = Resources.Load("Material/Color/Pink") as Material;
                 break;
             case Team.Gray:
+                m = Resources.Load("Material/Color/Gray") as Material;
                 break;
             case Team.None:
                 break;
+        }
+
+        if (m != null)
+        {
+            foreach (var item in meshRenderers)
+            {
+                item.material = m;
+            }
         }
     }
 
@@ -159,7 +177,7 @@ public class Unit : MonoBehaviour
     {
         if (!healthBar)
         {
-            healthBar = Instantiate(Resources.Load("HealthBar") as GameObject, GameObject.Find("Canvas 2").transform);
+            healthBar = Instantiate(Resources.Load("UI/HealthBar") as GameObject, GameObject.Find("Canvas 2").transform);
         }
 
         healthBar.transform.position = new Vector3(transform.position.x, transform.position.y + h, transform.position.z);
@@ -175,7 +193,8 @@ public class Unit : MonoBehaviour
 
     public void CreateArrow(string nameArrow, Property p, float speed, Unit target)
     {
-        GameObject arrow = Instantiate(Resources.Load(nameArrow) as GameObject, transform.position, Quaternion.identity);
+        GameObject arrow = Instantiate(Resources.Load("Orther/" + nameArrow) as GameObject,
+            new Vector3(transform.position.x, transform.position.y + h, transform.position.z), Quaternion.identity);
 
         Bullet b = arrow.GetComponent<Bullet>();
         b.speed = speed;

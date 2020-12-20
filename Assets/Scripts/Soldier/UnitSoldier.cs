@@ -9,7 +9,7 @@ public class UnitSoldier : Unit
 
     public override void Start()
     {
-        base.Start()
+        base.Start();
         agent = GetComponent<NavMeshAgent>();
     }
 
