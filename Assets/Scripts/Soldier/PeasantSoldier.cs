@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PeasantSoldier : UnitSoldier
 {
@@ -12,9 +10,22 @@ public class PeasantSoldier : UnitSoldier
 
     private void Update()
     {
+        if (healthBar)
+        {
+            UpdateHealthBar();
+        }
+
         switch (_property.state)
         {
             case State.None:
+
+                Unit u = GetNearestEnemy(10);
+
+                if(u)
+                {
+                    ActTo(u);
+                }
+
                 break;
             case State.Move:
                 if (Vector3.Distance(transform.position, targetVector) > 1)

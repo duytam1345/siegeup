@@ -35,6 +35,11 @@ public class Property
 {
     public string _name;
 
+    public int id;
+
+    [TextArea]
+    public string description;
+
     public int maxHealth;
     public int curHealth;
 
@@ -60,6 +65,9 @@ public class Unit : MonoBehaviour
 
     public CityHallConstruct cityHall;
 
+    //if la enemy
+    public EnemyController controller;
+
     public float tToAttack;
     public float tToAttackSecond;
 
@@ -68,6 +76,9 @@ public class Unit : MonoBehaviour
     public int r;//bán kính, tìm đường
 
     public GameObject healthBar;
+
+    public float tToCheckNearEnemy;
+    public float tToCheckNearEnemySecond;
 
     public virtual void Start()
     {
@@ -103,6 +114,11 @@ public class Unit : MonoBehaviour
 
     public void SetMove(Vector3 v)
     {
+        if (_property.state == State.Fight)
+        {
+            tToCheckNearEnemySecond = 5;
+        }
+
         _property.state = State.Move;
         targetVector = v;
     }
@@ -186,6 +202,7 @@ public class Unit : MonoBehaviour
 
         if (_property.curHealth <= 0)
         {
+            OnDeath();
             Destroy(healthBar.gameObject);
             Destroy(gameObject);
         }
@@ -200,5 +217,13 @@ public class Unit : MonoBehaviour
         b.speed = speed;
         b.property = p;
         b.unitTarget = target;
+    }
+
+    public void OnDeath()
+    {
+        if(Manager.manager.listSelected.Contains(this))
+        {
+            Manager.manager.listSelected.Remove(this);
+        }
     }
 }

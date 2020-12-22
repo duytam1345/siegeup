@@ -36,11 +36,18 @@ public class Manager : MonoBehaviour
 
     public GameObject currentToBuild;
     public bool firstMouseDown;
-
     public GameObject btnCancelBuild;
+
     public GameObject infoPanel;
+    public Text textInfoPanel;
+    public Transform contentInfoPanel;
+
     public GameObject buildPanel;
     public GameObject buildBtn;
+
+    public GameObject descriptionBtn;
+    public GameObject descriptionPanel;
+    public Text descriptionText;
 
     public GameObject cam;
 
@@ -98,25 +105,25 @@ public class Manager : MonoBehaviour
                 else
                 {
                     if (currentToBuild.GetComponent<Building>().colliders.Count <= 0)
-                    {
-                        startPosMouseDown = Vector2.zero;
+                {
+                    startPosMouseDown = Vector2.zero;
 
-                        currentToBuild.GetComponent<Building>().SetConstruct();
+                    currentToBuild.GetComponent<Building>().SetConstruct();
 
-                        GameObject g = Instantiate(Resources.Load("Construct/" + currentToBuild.GetComponent<Building>().n + "_2") as GameObject, currentToBuild.transform.position, Quaternion.identity);
+                    GameObject g = Instantiate(Resources.Load("Construct/" + currentToBuild.GetComponent<Building>().n + "_2") as GameObject, currentToBuild.transform.position, Quaternion.identity);
 
-                        Destroy(currentToBuild);
-                        btnCancelBuild.SetActive(false);
-                        buildPanel.SetActive(true);
-                        return;
-                    }
+                    Destroy(currentToBuild);
+                    btnCancelBuild.SetActive(false);
+                    buildPanel.SetActive(true);
+                    return;
+                }
                 }
             }
 
             Vector2 endPosMouseDown = Input.mousePosition;
 
             //click
-            if (Vector2.Distance(endPosMouseDown, startPosMouseDown) <= 1)
+            if (Vector2.Distance(endPosMouseDown, startPosMouseDown) <= 10)
             {
                 RaycastHit hit;
                 if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
@@ -125,31 +132,79 @@ public class Manager : MonoBehaviour
                     {
                         Unit unit = hit.collider.gameObject.GetComponent<Unit>();
 
-                        foreach (var item in listSelected)
+                        if (listSelected.Count > 0)
                         {
-                            item.ActTo(unit);
+                            foreach (var item in listSelected)
+                            {
+                                item.ActTo(unit);
+
+                                descriptionBtn.SetActive(false);
+                            }
                         }
-                        DeSelectAll();
+                        else
+                        {
+                            if (unit.GetComponent<UnitConstruct>())
+                            {
+                                listSelected.Clear();
+                                listSelected.Add(unit);
+
+                                infoPanel.SetActive(true);
+                                unit.OnSelect();
+
+                                foreach (Transform item in contentInfoPanel)
+                                {
+                                    Destroy(item.gameObject);
+                                }
+
+                                unit.GetComponent<UnitConstruct>().ShowPanel();
+                                descriptionBtn.SetActive(true);
+
+                                buildPanel.SetActive(false);
+                            }
+                        }
                     }
                     else
                     {
-                        foreach (var item in listSelected)
+                        int c = listSelected.Count;
+                        float sqrt = Mathf.Sqrt(c);
+                        while ((int)sqrt != sqrt)
                         {
-                            //item.MoveTo(hit.point);
-                            item.SetMove(hit.point);
+                            c++;
+                            sqrt = Mathf.Sqrt(c);
                         }
+
+                        List<Vector3> v = new List<Vector3>();
+                        for (int i = 0; i < sqrt; i++)
+                        {
+                            for (int j = 0; j < sqrt; j++)
+                            {
+                                Vector3 newV = hit.point - listSelected[0].transform.position + new Vector3(i, 0, j);
+                                v.Add(newV);
+                            }
+                        }
+
+                        for (int i = 0; i < listSelected.Count; i++)
+                        {
+                            listSelected[i].SetMove(listSelected[0].transform.position + v[i]);
+                        }
+
+                        descriptionBtn.SetActive(false);
                     }
                 }
             }
             //drag
             else
             {
-                foreach (var item in listSelected)
-                {
-                    item.OnDeSelect();
-                }
-                listSelected.Clear();
+                descriptionBtn.SetActive(false);
 
+
+                if (startPosMouseDown != Vector2.zero)
+                {
+                    infoPanel.SetActive(false);
+                    buildBtn.SetActive(true);
+
+                    DeSelectAll();
+                }
 
                 UnitSoldier[] unitRts = FindObjectsOfType<UnitSoldier>();
 
@@ -204,9 +259,50 @@ public class Manager : MonoBehaviour
 
     void UnitSelect(List<UnitSoldier> units)
     {
-        if(units.Count>0)
+        if (units.Count > 0)
         {
             infoPanel.SetActive(true);
+            buildBtn.SetActive(false);
+            buildPanel.SetActive(false);
+
+            Dictionary<string, int> keyValues = new Dictionary<string, int>();
+
+            foreach (var item in units)
+            {
+                if (keyValues.ContainsKey(item._property._name))
+                {
+                    keyValues[item._property._name]++;
+                }
+                else
+                {
+                    keyValues.Add(item._property._name, 1);
+                }
+            }
+
+
+            foreach (Transform item in contentInfoPanel)
+            {
+                Destroy(item.gameObject);
+            }
+
+            foreach (var item in keyValues)
+            {
+                GameObject g = Instantiate(Resources.Load("UI/Slot Info") as GameObject, contentInfoPanel);
+                g.transform.GetChild(0).GetChild(1).GetComponent<Text>().text = item.Key;
+                g.GetComponent<SlotInfo>().unitSoldiers = new List<UnitSoldier>();
+                g.transform.GetChild(0).GetChild(2).GetComponent<Text>().text = item.Value.ToString();
+                foreach (var jtem in units)
+                {
+                    if (jtem._property._name == item.Key)
+                    {
+                        g.GetComponent<SlotInfo>().unitSoldiers.Add(jtem.GetComponent<UnitSoldier>());
+                    }
+                }
+            }
+        }
+        else
+        {
+            infoPanel.SetActive(false);
         }
 
         foreach (var item in units)
@@ -266,6 +362,16 @@ public class Manager : MonoBehaviour
     {
         buildBtn.SetActive(false);
         buildPanel.SetActive(true);
+        infoPanel.SetActive(false);
+    }
+
+    public void DescriptionBtnOnClick()
+    {
+        if (listSelected.Count > 0 && listSelected.Count < 2)
+        {
+            descriptionText.text = listSelected[0]._property.description;
+            descriptionPanel.SetActive(true);
+        }
     }
 
     public bool MouseOnUI()
@@ -290,7 +396,7 @@ public class Manager : MonoBehaviour
         if (Input.GetKey(KeyCode.Q))
         {
             Vector3 euler = cam.transform.eulerAngles;
-            euler.y -=1;
+            euler.y -= 1;
 
             cam.transform.eulerAngles = euler;
         }
@@ -302,7 +408,7 @@ public class Manager : MonoBehaviour
             cam.transform.eulerAngles = euler;
         }
 
-        if(Input.GetKey(KeyCode.W))
+        if (Input.GetKey(KeyCode.W))
         {
             Vector3 pos = cam.transform.position;
             pos += cam.transform.forward * .5f;
@@ -320,7 +426,7 @@ public class Manager : MonoBehaviour
         if (Input.GetKey(KeyCode.A))
         {
             Vector3 pos = cam.transform.position;
-            pos -= cam.transform.right*.5f;
+            pos -= cam.transform.right * .5f;
 
             cam.transform.position = pos;
         }
@@ -344,6 +450,8 @@ public class Manager : MonoBehaviour
 
     public void ClosePanelBtn(GameObject g)
     {
+        DeSelectAll();
+
         g.SetActive(false);
         buildBtn.SetActive(true);
     }

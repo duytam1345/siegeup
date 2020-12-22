@@ -133,11 +133,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8088123488658683892}
-  - component: {fileID: 8088123488658683895}
   - component: {fileID: 8088123488658683890}
   - component: {fileID: 8088123488658683893}
+  - component: {fileID: 8897488172046764559}
   m_Layer: 9
-  m_Name: Peasant
+  m_Name: Spearman
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -159,46 +159,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8088123488658683895
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8088123488658683894}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f0e87f964737014eaf3db44ee8d15f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _property:
-    _name: Peasant
-    id: 0
-    description: 
-    maxHealth: 125
-    curHealth: 125
-    dmgConstruct: 8
-    dmgSoldier: 10
-    colorTeam: 0
-    state: 0
-  circleSelect: {fileID: 0}
-  meshRenderers: []
-  targetTree: {fileID: 0}
-  targetFarm: {fileID: 0}
-  targetVector: {x: 0, y: 0, z: 0}
-  targetAttack: {fileID: 0}
-  cityHall: {fileID: 0}
-  tToAttack: 0.5
-  tToAttackSecond: 0
-  h: 3
-  m: 0
-  r: 0
-  healthBar: {fileID: 0}
-  agent: {fileID: 0}
-  tToGet: 1
-  tToGetSecond: 0
-  curContain: 0
-  maxContain: 5
 --- !u!195 &8088123488658683890
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -234,6 +194,46 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 2, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &8897488172046764559
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8088123488658683894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f9d3b30c0e54114ea028739e84f2879, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _property:
+    _name: Spearman
+    id: 0
+    description: 
+    maxHealth: 0
+    curHealth: 0
+    dmgConstruct: 0
+    dmgSoldier: 0
+    colorTeam: 0
+    state: 0
+  circleSelect: {fileID: 0}
+  meshRenderers: []
+  targetTree: {fileID: 0}
+  targetFarm: {fileID: 0}
+  targetVector: {x: 0, y: 0, z: 0}
+  targetAttack: {fileID: 0}
+  cityHall: {fileID: 0}
+  tToAttack: 0
+  tToAttackSecond: 0
+  h: 0
+  m: 0
+  r: 0
+  healthBar: {fileID: 0}
+  agent: {fileID: 0}
+  tToGet: 1
+  tToGetSecond: 0
+  curContain: 0
+  maxContain: 5
 --- !u!1 &8088123488909174441
 GameObject:
   m_ObjectHideFlags: 0

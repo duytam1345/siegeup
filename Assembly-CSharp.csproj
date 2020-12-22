@@ -69,17 +69,23 @@
     <Compile Include="Assets\Scenes\StateExmaple2.cs" />
     <Compile Include="Assets\Scripts\Building.cs" />
     <Compile Include="Assets\Scripts\Bullet.cs" />
+    <Compile Include="Assets\Scripts\Construct\ArcherRangeConstruct.cs" />
+    <Compile Include="Assets\Scripts\Construct\BarracksConstruct.cs" />
     <Compile Include="Assets\Scripts\Construct\CityHallConstruct.cs" />
     <Compile Include="Assets\Scripts\Construct\FarmConstruct.cs" />
     <Compile Include="Assets\Scripts\Construct\HouseConstruct.cs" />
     <Compile Include="Assets\Scripts\Construct\UnitConstruct.cs" />
+    <Compile Include="Assets\Scripts\EnemyController.cs" />
     <Compile Include="Assets\Scripts\Manager.cs" />
+    <Compile Include="Assets\Scripts\SlotInfo.cs" />
     <Compile Include="Assets\Scripts\Soldier\ArcherSoldier.cs" />
     <Compile Include="Assets\Scripts\Soldier\KnightSoldier.cs" />
     <Compile Include="Assets\Scripts\Soldier\PeasantSoldier.cs" />
+    <Compile Include="Assets\Scripts\Soldier\SpearmanSoldier.cs" />
     <Compile Include="Assets\Scripts\Soldier\UnitSoldier.cs" />
     <Compile Include="Assets\Scripts\TreeUnit.cs" />
     <Compile Include="Assets\Scripts\Unit.cs" />
+    <Compile Include="Assets\SimpleMinMaxSlider\Scripts\MinMaxSliderAttribute.cs" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>D:/Dev/Unity/Siege Up3/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>
