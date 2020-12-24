@@ -15,13 +15,18 @@ public class PeasantSoldier : UnitSoldier
             UpdateHealthBar();
         }
 
+        if (Manager.manager.isPause)
+        {
+            return;
+        }
+
         switch (_property.state)
         {
             case State.None:
 
                 Unit u = GetNearestEnemy(10);
 
-                if(u)
+                if (u)
                 {
                     ActTo(u);
                 }
@@ -39,16 +44,19 @@ public class PeasantSoldier : UnitSoldier
                 }
                 break;
             case State.MoveFarm:
-                if (Vector3.Distance(transform.position, targetFarm.transform.position) > 1)
+                if (targetFarm)
                 {
-                    MoveTo(targetFarm.transform.position);
-                }
-                else
-                {
-                    agent.ResetPath();
-                    _property.state = State.GetFarm;
+                    if (Vector3.Distance(transform.position, targetFarm.transform.position) > 1)
+                    {
+                        MoveTo(targetFarm.transform.position);
+                    }
+                    else
+                    {
+                        agent.ResetPath();
+                        _property.state = State.GetFarm;
 
-                    tToGetSecond = 0;
+                        tToGetSecond = 0;
+                    }
                 }
                 break;
             case State.GetFarm:
@@ -93,16 +101,19 @@ public class PeasantSoldier : UnitSoldier
                 _property.state = State.MoveFarm;
                 break;
             case State.MoveTree:
-                if (Vector3.Distance(transform.position, targetTree.transform.position) > 1)
+                if (targetTree)
                 {
-                    MoveTo(targetTree.transform.position);
-                }
-                else
-                {
-                    agent.ResetPath();
-                    _property.state = State.GetTree;
+                    if (Vector3.Distance(transform.position, targetTree.transform.position) > 2)
+                    {
+                        MoveTo(targetTree.transform.position);
+                    }
+                    else
+                    {
+                        agent.ResetPath();
+                        _property.state = State.GetTree;
 
-                    tToGetSecond = 0;
+                        tToGetSecond = 0;
+                    }
                 }
                 break;
             case State.GetTree:
@@ -147,14 +158,17 @@ public class PeasantSoldier : UnitSoldier
                 _property.state = State.MoveTree;
                 break;
             case State.MoveFight:
-                if (Vector3.Distance(transform.position, targetAttack.transform.position) > 3)
+                if (targetAttack)
                 {
-                    MoveTo(targetAttack.transform.position);
-                }
-                else
-                {
-                    agent.ResetPath();
-                    _property.state = State.Fight;
+                    if (Vector3.Distance(transform.position, targetAttack.transform.position) > 3)
+                    {
+                        MoveTo(targetAttack.transform.position);
+                    }
+                    else
+                    {
+                        agent.ResetPath();
+                        _property.state = State.Fight;
+                    }
                 }
                 break;
             case State.Fight:

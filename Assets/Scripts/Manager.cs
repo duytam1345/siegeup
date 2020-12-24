@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 [System.Serializable]
@@ -17,7 +18,16 @@ public class ResourcesGame
 
 public class Manager : MonoBehaviour
 {
+    //Làm thêm kẻ địch và hiệu ứng
+    //Các button ui
+
     public static Manager manager;
+
+    public bool isPause;
+
+    public bool testMode;
+
+    public bool onMenu;
 
     public RectTransform boxSelection;
 
@@ -49,6 +59,9 @@ public class Manager : MonoBehaviour
     public GameObject descriptionPanel;
     public Text descriptionText;
 
+    public GameObject winLosePanel;
+    public Text textWinLose;
+
     public GameObject cam;
 
     private void Awake()
@@ -61,8 +74,23 @@ public class Manager : MonoBehaviour
         cam = Camera.main.transform.parent.gameObject;
     }
 
+    private void Start()
+    {
+        UpdateresourcesGame();
+    }
+
     private void Update()
     {
+        if (isPause)
+        {
+            return;
+        }
+
+        if (onMenu)
+        {
+            return;
+        }
+
         MoveCamera();
 
         if (currentToBuild)
@@ -75,6 +103,11 @@ public class Manager : MonoBehaviour
                     currentToBuild.transform.position = hit.point;
                 }
             }
+        }
+
+        if (isPause)
+        {
+            return;
         }
 
         if (Input.GetMouseButtonDown(0))
@@ -105,22 +138,47 @@ public class Manager : MonoBehaviour
                 else
                 {
                     if (currentToBuild.GetComponent<Building>().colliders.Count <= 0)
-                {
-                    startPosMouseDown = Vector2.zero;
+                    {
+                        switch (currentToBuild.GetComponent<Building>().n)
+                        {
+                            case "Archer Range":
+                                resourcesGame._gold -= 10;
+                                resourcesGame._wood -= 20;
+                                break;
+                            case "Farm":
+                                resourcesGame._wood -= 40;
+                                break;
+                            case "House":
+                                resourcesGame._wood -= 30;
+                                break;
+                            case "Barracks":
+                                resourcesGame._gold -= 20;
+                                resourcesGame._metal -= 20;
+                                break;
+                        }
 
-                    currentToBuild.GetComponent<Building>().SetConstruct();
+                        UpdateresourcesGame();
 
-                    GameObject g = Instantiate(Resources.Load("Construct/" + currentToBuild.GetComponent<Building>().n + "_2") as GameObject, currentToBuild.transform.position, Quaternion.identity);
+                        startPosMouseDown = Vector2.zero;
 
-                    Destroy(currentToBuild);
-                    btnCancelBuild.SetActive(false);
-                    buildPanel.SetActive(true);
-                    return;
-                }
+                        currentToBuild.GetComponent<Building>().SetConstruct();
+
+                        GameObject g = Instantiate(Resources.Load("Construct/" + currentToBuild.GetComponent<Building>().n + "_2") as GameObject, currentToBuild.transform.position, Quaternion.identity);
+
+                        Destroy(currentToBuild);
+                        btnCancelBuild.SetActive(false);
+                        buildPanel.SetActive(true);
+                        return;
+                    }
                 }
             }
 
             Vector2 endPosMouseDown = Input.mousePosition;
+
+            if(startPosMouseDown==Vector2.zero)
+            {
+                return;
+            }
 
             //click
             if (Vector2.Distance(endPosMouseDown, startPosMouseDown) <= 10)
@@ -245,16 +303,19 @@ public class Manager : MonoBehaviour
 
     void SetSelectionBox(Vector3 vector)
     {
-        if (!boxSelection.gameObject.activeInHierarchy)
+        if (boxSelection)
         {
-            boxSelection.gameObject.SetActive(true);
+            if (!boxSelection.gameObject.activeInHierarchy)
+            {
+                boxSelection.gameObject.SetActive(true);
+            }
+
+            float width = vector.x - startPosMouseDown.x;
+            float height = vector.y - startPosMouseDown.y;
+
+            boxSelection.sizeDelta = new Vector2(Mathf.Abs(width), Mathf.Abs(height));
+            boxSelection.position = startPosMouseDown + new Vector2(width / 2, height / 2);
         }
-
-        float width = vector.x - startPosMouseDown.x;
-        float height = vector.y - startPosMouseDown.y;
-
-        boxSelection.sizeDelta = new Vector2(Mathf.Abs(width), Mathf.Abs(height));
-        boxSelection.position = startPosMouseDown + new Vector2(width / 2, height / 2);
     }
 
     void UnitSelect(List<UnitSoldier> units)
@@ -327,11 +388,26 @@ public class Manager : MonoBehaviour
     /// </summary>
     public void UpdateresourcesGame()
     {
-        textGold.text = resourcesGame._gold + "";
-        textFood.text = resourcesGame._food + "";
-        textWood.text = resourcesGame._wood + "";
-        textMetal.text = resourcesGame._metal + "";
-        textSoldier.text = resourcesGame._soldier + "/" + resourcesGame._maxSoldier;
+        if (textGold)
+        {
+            textGold.text = resourcesGame._gold + "";
+        }
+        if (textFood)
+        {
+            textFood.text = resourcesGame._food + "";
+        }
+        if (textWood)
+        {
+            textWood.text = resourcesGame._wood + "";
+        }
+        if (textMetal)
+        {
+            textMetal.text = resourcesGame._metal + "";
+        }
+        if (textSoldier)
+        {
+            textSoldier.text = resourcesGame._soldier + "/" + resourcesGame._maxSoldier;
+        }
     }
 
     public void CreatePeasant()
@@ -347,6 +423,11 @@ public class Manager : MonoBehaviour
     {
         if (!currentToBuild)
         {
+            if (!EnoughResource(n))
+            {
+                return;
+            }
+
             currentToBuild = Instantiate(Resources.Load("Construct/" + n + "_1") as GameObject, Vector2.zero, Quaternion.identity);
             currentToBuild.GetComponent<Building>().n = n;
 
@@ -355,6 +436,37 @@ public class Manager : MonoBehaviour
             buildBtn.SetActive(false);
 
             firstMouseDown = true;
+        }
+    }
+
+    bool EnoughResource(string s)
+    {
+        int needWood = 0;
+        int needMetal = 0;
+
+        switch (s)
+        {
+            case "Farm":
+                needWood = 40;
+                break;
+            case "House":
+                needWood = 30;
+                break;
+            case "Barracks":
+                needMetal = 25;
+                break;
+            case "Archer Range":
+                needWood = 20;
+                break;
+        }
+
+        if (resourcesGame._wood >= needWood && resourcesGame._metal >= needMetal)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
@@ -454,5 +566,23 @@ public class Manager : MonoBehaviour
 
         g.SetActive(false);
         buildBtn.SetActive(true);
+    }
+
+    public void SetPanelWinLose(string s)
+    {
+        isPause = true;
+
+        winLosePanel.SetActive(true);
+        textWinLose.text = "You " + s + " !";
+    }
+
+    public void RestartBtn()
+    {
+        SceneManager.LoadScene("Level1");
+    }
+
+    public void BackMenuBtn()
+    {
+        SceneManager.LoadScene("MainMenu");
     }
 }

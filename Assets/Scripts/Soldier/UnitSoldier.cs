@@ -8,8 +8,6 @@ public class UnitSoldier : Unit
 {
     public NavMeshAgent agent;
 
-    
-
     public Mission mission;
     public Vector3 vMission;
 
@@ -87,6 +85,11 @@ public class UnitSoldier : Unit
 
     public override void ActTo(Unit unit)
     {
+        if(unit == null)
+        {
+            return;
+        }
+
         Property p = unit._property;
 
         if (unit._property.colorTeam != _property.colorTeam && unit._property.colorTeam != Team.None)

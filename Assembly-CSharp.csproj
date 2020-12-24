@@ -76,7 +76,10 @@
     <Compile Include="Assets\Scripts\Construct\HouseConstruct.cs" />
     <Compile Include="Assets\Scripts\Construct\UnitConstruct.cs" />
     <Compile Include="Assets\Scripts\EnemyController.cs" />
+    <Compile Include="Assets\Scripts\MainMenu.cs" />
     <Compile Include="Assets\Scripts\Manager.cs" />
+    <Compile Include="Assets\Scripts\Mine.cs" />
+    <Compile Include="Assets\Scripts\Mover.cs" />
     <Compile Include="Assets\Scripts\SlotInfo.cs" />
     <Compile Include="Assets\Scripts\Soldier\ArcherSoldier.cs" />
     <Compile Include="Assets\Scripts\Soldier\KnightSoldier.cs" />

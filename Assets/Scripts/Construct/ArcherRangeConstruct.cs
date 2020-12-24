@@ -9,10 +9,19 @@ public class ArcherRangeConstruct : UnitConstruct
 
     private void Update()
     {
-        if (createArcherman.currentCount > 0)
+        if (createArcherman.t > 0)
+        {
+            createArcherman.t -= Time.deltaTime;
+        }
+
+        if (healthBar)
+        {
+            UpdateHealthBar();
+        }
+
+        if (createArcherman.Update())
         {
             CreateArcherman();
-            createArcherman.currentCount--; 
         }
     }
 
@@ -21,11 +30,21 @@ public class ArcherRangeConstruct : UnitConstruct
         GameObject g = Instantiate(Resources.Load("UI/Slot Button") as GameObject, Manager.manager.contentInfoPanel);
         g.GetComponent<Button>().onClick.AddListener(delegate { OnClickCreateArcherman(); });
         g.transform.GetChild(0).GetComponent<Text>().text = "Archerman";
+
+        createArcherman.fillAmount = g.transform.GetChild(1).GetChild(0).GetComponent<Image>();
+        createArcherman.textAmount = g.transform.GetChild(1).GetChild(1).GetComponent<Text>();
     }
 
     void OnClickCreateArcherman()
     {
-        createArcherman.currentCount++;
+        if (Manager.manager.resourcesGame._food >= 15 && Manager.manager.resourcesGame._wood >= 15)
+        {
+            Manager.manager.resourcesGame._food -= 15;
+            Manager.manager.resourcesGame._wood -= 15;
+            Manager.manager.UpdateresourcesGame();
+
+            createArcherman.currentCount++;
+        }
     }
 
     void CreateArcherman()

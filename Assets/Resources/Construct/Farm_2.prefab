@@ -61,8 +61,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _property:
     _name: Farm
-    maxHealth: 0
-    curHealth: 0
+    id: 0
+    description: 
+    maxHealth: 150
+    curHealth: 150
     dmgConstruct: 0
     dmgSoldier: 0
     colorTeam: 0
@@ -74,12 +76,16 @@ MonoBehaviour:
   targetVector: {x: 0, y: 0, z: 0}
   targetAttack: {fileID: 0}
   cityHall: {fileID: 0}
+  controller: {fileID: 0}
   tToAttack: 0
   tToAttackSecond: 0
-  h: 0
+  h: 3
   m: 0
   r: 0
   healthBar: {fileID: 0}
+  tToCheckNearEnemy: 0
+  tToCheckNearEnemySecond: 0
+  posToCreateSoldier: {fileID: 0}
 --- !u!1 &6710417181756092690
 GameObject:
   m_ObjectHideFlags: 0

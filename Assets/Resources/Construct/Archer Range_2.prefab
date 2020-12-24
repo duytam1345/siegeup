@@ -108,17 +108,21 @@ MonoBehaviour:
   targetVector: {x: 0, y: 0, z: 0}
   targetAttack: {fileID: 0}
   cityHall: {fileID: 0}
+  controller: {fileID: 0}
   tToAttack: 0
   tToAttackSecond: 0
   h: 0
   m: 0
   r: 0
   healthBar: {fileID: 0}
+  tToCheckNearEnemy: 0
+  tToCheckNearEnemySecond: 0
   posToCreateSoldier: {fileID: 597728373839037982}
   createArcherman:
     currentCount: 0
-    tToCreate: 0
-    tToCreateSecond: 0
+    tToCreate: 2
+    tToCreateSecond: 2
+    t: 0
 --- !u!1 &6710417181756092690
 GameObject:
   m_ObjectHideFlags: 0

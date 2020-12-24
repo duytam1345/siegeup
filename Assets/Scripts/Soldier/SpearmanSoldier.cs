@@ -12,11 +12,57 @@ public class SpearmanSoldier : UnitSoldier
 
     private void Update()
     {
+        if (healthBar)
+        {
+            UpdateHealthBar();
+        }
+
+        if(Manager.manager.isPause)
+        {
+            return;
+        }
+
         switch (_property.state)
         {
             case State.None:
+                if (tToCheckNearEnemySecond <= 0)
+                {
+                    Unit u = GetNearestEnemy(10);
+
+                    if (u)
+                    {
+                        ActTo(u);
+                    }
+                }
+
+                switch (mission)
+                {
+                    case Mission.Farm:
+                        break;
+                    case Mission.Tree:
+                        break;
+                    case Mission.Move:
+                        SetMove(vMission);
+                        break;
+                    case Mission.None:
+                        break;
+                }
                 break;
             case State.Move:
+                if (tToCheckNearEnemySecond <= 0)
+                {
+                    Unit u = GetNearestEnemy(10);
+
+                    if (u)
+                    {
+                        ActTo(u);
+                    }
+                }
+                else
+                {
+                    tToCheckNearEnemySecond -= Time.deltaTime;
+                }
+
                 if (Vector3.Distance(transform.position, targetVector) > 1)
                 {
                     MoveTo(targetVector);
@@ -44,14 +90,21 @@ public class SpearmanSoldier : UnitSoldier
             case State.PutTree:
                 break;
             case State.MoveFight:
-                if (Vector3.Distance(transform.position, targetAttack.transform.position) > 3)
+                if (targetAttack)
                 {
-                    MoveTo(targetAttack.transform.position);
+                    if (Vector3.Distance(transform.position, targetAttack.transform.position) > 3)
+                    {
+                        MoveTo(targetAttack.transform.position);
+                    }
+                    else
+                    {
+                        agent.ResetPath();
+                        _property.state = State.Fight;
+                    }
                 }
                 else
                 {
-                    agent.ResetPath();
-                    _property.state = State.Fight;
+                    _property.state = State.None;
                 }
                 break;
             case State.Fight:

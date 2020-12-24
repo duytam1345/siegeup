@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor.AnimatedValues;
+using System.Linq;
 
 public enum Mission
 {
@@ -12,56 +13,82 @@ public enum Mission
     None,
 }
 
+//Tái tạo lại nếu xung quanh không có đối tượng khác phe, và vị trí đó trống. sau một khoảng thời gian.
 [System.Serializable]
-public class NewWave
+public class AutoBuild
 {
-    public enum TypeWave
-    {
-        LocalWave,
-        TimeWave
-    }
-
-    public TypeWave typeWave;
-
-    public string nameCreate;
-    public int amountCreate;
-
+    //Vị trí tạo
     public Vector3 v;
 
-    public float tToCreate;
-    public float tToCreateSecond;
+    //Vị trí để kiểm tra trống hay không.
+    public UnitConstruct construct;
 
-    public bool done;
+    //Tên công trình
+    public string n;
 
-    public Mission mission;
+    public EnemyController controller;
 
-    public void Create(EnemyController controller)
+    public float t;
+    public float tSecond;
+
+    public bool Check()
     {
-        for (int i = 0; i < amountCreate; i++)
+        if (RoundNull())
         {
-            GameObject g = GameObject.Instantiate(Resources.Load("Soldier/" + nameCreate) as GameObject,
-                    controller.CityHallConstruct.posToCreateSoldier.position, Quaternion.identity);
-
-            UnitSoldier cUnit = g.GetComponent<UnitSoldier>();
-            cUnit.controller = controller;
-
-            cUnit._property.colorTeam = controller.team;
-            cUnit.SetColorTeam();
-
-            switch (mission)
+            if (!construct)
             {
-                case Mission.Farm:
-                    cUnit.ActTo(cUnit.GetNearestFarmWithVector3(v));
-                    break;
-                case Mission.Tree:
-                    cUnit.ActTo(cUnit.GetNearestTreeWithVector3(v));
-                    break;
-                case Mission.Move:
-                    cUnit.SetMove(v);
-                    break;
-                case Mission.None:
-                    break;
+                tSecond -= Time.deltaTime;
+
+                if (tSecond <= 0)
+                {
+                    tSecond = t;
+                    Create();
+                }
+
+                return true;
             }
+        }
+
+        return false;
+    }
+
+    bool RoundNull()
+    {
+        List<Unit> units = GameObject.FindObjectsOfType<Unit>().ToList();
+
+        foreach (var item in units)
+        {
+            if (item._property.colorTeam != controller.team && item._property.colorTeam != Team.None)
+            {
+                if (Vector3.Distance(controller.CityHallConstruct.transform.position, item.transform.position) <= 25)
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    void Create()
+    {
+        GameObject g = GameObject.Instantiate(Resources.Load("Construct/" + n + "_2") as GameObject, v, Quaternion.identity);
+
+        construct = g.GetComponent<UnitConstruct>();
+
+        construct._property.colorTeam = controller.team;
+        construct.SetColorTeam();
+
+        switch (n)
+        {
+            case "Farm":
+                controller.farmConstructs.Add(construct.GetComponent<FarmConstruct>());
+                break;
+            case "Barracks":
+                controller.barracksConstructs.Add(construct.GetComponent<BarracksConstruct>());
+                break;
+            case "Archer Range":
+                controller.archerRangeConstructs.Add(construct.GetComponent<ArcherRangeConstruct>());
+                break;
         }
     }
 }
@@ -91,54 +118,38 @@ public class HWave
 
     void Create()
     {
-        //if (targetUnit._property._name == "Tree")
-        //{
-        //    GameObject g = GameObject.Instantiate(Resources.Load("Soldier/Peasant") as GameObject,
-        //        controller.CityHallConstruct.posToCreateSoldier.position,
-        //        Quaternion.identity);
-
-        //    soldier = g.GetComponent<UnitSoldier>();
-        //    soldier._property.colorTeam = controller.team;
-        //    soldier.SetColorTeam();
-
-        //    soldier.ActTo(targetUnit);
-        //}
-        //else if (targetUnit._property._name == "Farm")
-        //{
-        //    GameObject g = GameObject.Instantiate(Resources.Load("Soldier/Peasant") as GameObject,
-        //        controller.CityHallConstruct.posToCreateSoldier.position,
-        //        Quaternion.identity);
-
-        //    soldier = g.GetComponent<UnitSoldier>();
-        //    soldier._property.colorTeam = controller.team;
-        //    soldier.SetColorTeam();
-
-        //    soldier.ActTo(targetUnit);
-        //}
-
-        if (sTarget == "Farm")
+        if (controller.CityHallConstruct.createPeasant.t <= 0)
         {
-            GameObject g = GameObject.Instantiate(Resources.Load("Soldier/Peasant") as GameObject,
-                controller.CityHallConstruct.posToCreateSoldier.position,
-                Quaternion.identity);
+            controller.CityHallConstruct.createPeasant.StartCreate();
+            if (sTarget == "Farm")
+            {
+                if (controller.farmConstructs.Count <= 0)
+                {
+                    return;
+                }
 
-            soldier = g.GetComponent<UnitSoldier>();
-            soldier._property.colorTeam = controller.team;
-            soldier.SetColorTeam();
+                GameObject g = GameObject.Instantiate(Resources.Load("Soldier/Peasant") as GameObject,
+                    controller.CityHallConstruct.posToCreateSoldier.position,
+                    Quaternion.identity);
 
-            soldier.ActTo(soldier.GetNearestFarmWithVector3(vTarget));
-        }
-        else if (sTarget == "Tree")
-        {
-            GameObject g = GameObject.Instantiate(Resources.Load("Soldier/Peasant") as GameObject,
-                controller.CityHallConstruct.posToCreateSoldier.position,
-                Quaternion.identity);
+                soldier = g.GetComponent<UnitSoldier>();
+                soldier._property.colorTeam = controller.team;
+                soldier.SetColorTeam();
 
-            soldier = g.GetComponent<UnitSoldier>();
-            soldier._property.colorTeam = controller.team;
-            soldier.SetColorTeam();
+                soldier.ActTo(soldier.GetNearestFarmWithVector3(vTarget));
+            }
+            else if (sTarget == "Tree")
+            {
+                GameObject g = GameObject.Instantiate(Resources.Load("Soldier/Peasant") as GameObject,
+                    controller.CityHallConstruct.posToCreateSoldier.position,
+                    Quaternion.identity);
 
-            soldier.ActTo(soldier.GetNearestTreeWithVector3(vTarget));
+                soldier = g.GetComponent<UnitSoldier>();
+                soldier._property.colorTeam = controller.team;
+                soldier.SetColorTeam();
+
+                soldier.ActTo(soldier.GetNearestTreeWithVector3(vTarget));
+            }
         }
     }
 }
@@ -175,7 +186,7 @@ public class TimeWave
     [MinMaxSlider(0, 60)]
     public Vector2Int tToCreateR;
 
-    [MinMaxSlider(0, 10)]
+    [MinMaxSlider(0, 50)]
     public Vector2Int amountR;
 
     //
@@ -183,40 +194,108 @@ public class TimeWave
 
     public void UpdateToCreate()
     {
-        tToCreateSecond -= Time.deltaTime;
+        if (tToCreateSecond > 0)
+        {
+            tToCreateSecond -= Time.deltaTime;
+        }
 
         if (tToCreateSecond <= 0)
         {
-            Create();
-            tToCreateSecond = tToCreate;
+            Manager.manager.StartCoroutine(CreateCo());
+            SetTime();
         }
     }
 
-    public void Create()
+    void SetTime()
     {
+        if (typeWave == TypeWave.Default)
+        {
+            tToCreateSecond = tToCreate;
+        }
+        else
+        {
+            tToCreateSecond = Random.Range(tToCreateR.x, tToCreateR.y);
+        }
+    }
+
+    IEnumerator CreateCo()
+    {
+        List<UnitSoldier> soldiers = new List<UnitSoldier>();
+
+        int a = amountCreate;
+
         switch (typeWave)
         {
             case TypeWave.Default:
-
-                for (int i = 0; i < amountCreate; i++)
-                {
-                    GameObject g = GameObject.Instantiate(Resources.Load("Soldier/" + nameCreate) as GameObject,
-                        constructToCreate.posToCreateSoldier.position, Quaternion.identity);
-                    g.GetComponent<UnitSoldier>()._property.colorTeam = controller.team;
-                    g.GetComponent<UnitSoldier>().SetColorTeam();
-
-                    g.GetComponent<UnitSoldier>().SetMove(vAttack);
-                    g.GetComponent<UnitSoldier>().mission = Mission.Move;
-                    g.GetComponent<UnitSoldier>().vMission = vAttack;
-                }
-
                 break;
             case TypeWave.Random:
-                break;
-            default:
+                a = Random.Range(amountR.x, amountR.y);
                 break;
         }
+
+        for (int i = 0; i < a; i++)
+        {
+            switch (nameCreate)
+            {
+                case "Archerman":
+
+                    if (controller.archerRangeConstructs.Count > 0)
+                    {
+                        if(!constructToCreate)
+                        {
+                            if(controller.archerRangeConstructs.Count>0)
+                            {
+                                constructToCreate = controller.archerRangeConstructs[0];
+                            }
+                        }
+
+                        ArcherRangeConstruct archerRange = constructToCreate.GetComponent<ArcherRangeConstruct>();
+
+                        yield return new WaitUntil(() => { return (archerRange.createArcherman.t <= 0 ? true : false); });
+
+                        archerRange.createArcherman.StartCreate();
+
+                        GameObject g = GameObject.Instantiate(Resources.Load("Soldier/" + nameCreate) as GameObject,
+                            constructToCreate.posToCreateSoldier.position, Quaternion.identity);
+                        g.GetComponent<UnitSoldier>()._property.colorTeam = controller.team;
+                        g.GetComponent<UnitSoldier>().SetColorTeam();
+
+                        soldiers.Add(g.GetComponent<UnitSoldier>());
+
+                        SetTime();
+                    }
+                    break;
+                case "Spearman":
+                    if (controller.barracksConstructs.Count > 0)
+                    {
+
+                        BarracksConstruct barracks = constructToCreate.GetComponent<BarracksConstruct>();
+
+                        yield return new WaitUntil(() => { return (barracks.createSpearman.t <= 0 ? true : false); });
+
+                        barracks.createSpearman.StartCreate();
+
+                        GameObject g2 = GameObject.Instantiate(Resources.Load("Soldier/" + nameCreate) as GameObject,
+                            constructToCreate.posToCreateSoldier.position, Quaternion.identity);
+                        g2.GetComponent<UnitSoldier>()._property.colorTeam = controller.team;
+                        g2.GetComponent<UnitSoldier>().SetColorTeam();
+
+                        soldiers.Add(g2.GetComponent<UnitSoldier>());
+
+                        SetTime();
+                    }
+                    break;
+            }
+        }
+
+        foreach (var item in soldiers)
+        {
+            item.GetComponent<UnitSoldier>().SetMove(vAttack);
+            item.GetComponent<UnitSoldier>().mission = Mission.Move;
+            item.GetComponent<UnitSoldier>().vMission = vAttack;
+        }
     }
+
     public void SetStart()
     {
         switch (typeWave)
@@ -232,9 +311,7 @@ public class TimeWave
 
 public class EnemyController : MonoBehaviour
 {
-
-    //public NewWave[] newWaves;
-
+    public List<AutoBuild> autoBuilds;
     public List<HWave> hWaves;
     public List<TimeWave> timeWaves;
 
@@ -256,11 +333,17 @@ public class EnemyController : MonoBehaviour
 
     private void Start()
     {
+        foreach (var item in autoBuilds)
+        {
+            item.controller = this;
+        }
+
         foreach (var item in timeWaves)
         {
             item.controller = this;
             item.SetStart();
         }
+
 
         foreach (var item in hWaves)
         {
@@ -270,11 +353,26 @@ public class EnemyController : MonoBehaviour
 
     private void Update()
     {
-        foreach (var item in hWaves)
+        if (Manager.manager.isPause)
         {
-            item.Check();
+            return;
         }
 
+        foreach (var item in autoBuilds)
+        {
+            if (item.Check())
+            {
+                break;
+            }
+        }
+
+        if (CityHallConstruct)
+        {
+            foreach (var item in hWaves)
+            {
+                item.Check();
+            }
+        }
         foreach (var item in timeWaves)
         {
             item.UpdateToCreate();

@@ -202,6 +202,18 @@ public class Unit : MonoBehaviour
 
         if (_property.curHealth <= 0)
         {
+            if(_property._name == "City Hall")
+            {
+                if(_property.colorTeam == Team.Red)
+                {
+                    Manager.manager.SetPanelWinLose("Lose");
+                }
+                else
+                {
+                    Manager.manager.SetPanelWinLose("Win");
+                }
+            }
+
             OnDeath();
             Destroy(healthBar.gameObject);
             Destroy(gameObject);

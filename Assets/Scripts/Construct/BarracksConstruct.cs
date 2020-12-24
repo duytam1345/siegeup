@@ -9,10 +9,19 @@ public class BarracksConstruct : UnitConstruct
 
     private void Update()
     {
-        if (createSpearman.currentCount > 0)
+        if (createSpearman.t > 0)
+        {
+            createSpearman.t -= Time.deltaTime;
+        }
+
+        if (healthBar)
+        {
+            UpdateHealthBar();
+        }
+
+        if (createSpearman.Update())
         {
             CreateSpearman();
-            createSpearman.currentCount--;
         }
     }
 
@@ -21,16 +30,32 @@ public class BarracksConstruct : UnitConstruct
         GameObject g = Instantiate(Resources.Load("UI/Slot Button") as GameObject, Manager.manager.contentInfoPanel);
         g.GetComponent<Button>().onClick.AddListener(delegate { OnClickCreateSpearman(); });
         g.transform.GetChild(0).GetComponent<Text>().text = "Spearman";
+
+        createSpearman.fillAmount = g.transform.GetChild(1).GetChild(0).GetComponent<Image>();
+        createSpearman.textAmount = g.transform.GetChild(1).GetChild(1).GetComponent<Text>();
     }
 
     void OnClickCreateSpearman()
     {
-        createSpearman.currentCount++;
+        if (Manager.manager.resourcesGame._food >= 15 && Manager.manager.resourcesGame._gold >= 10)
+        {
+            Manager.manager.resourcesGame._food -= 15;
+            Manager.manager.resourcesGame._gold -= 10;
+            Manager.manager.UpdateresourcesGame();
+
+            createSpearman.currentCount++;
+        }
     }
 
-    void CreateSpearman() 
+    void CreateSpearman()
     {
         GameObject g = Instantiate(Resources.Load("Soldier/Spearman") as GameObject, posToCreateSoldier.position, Quaternion.identity);
         g.GetComponent<UnitSoldier>().SetMove(new Vector3(g.transform.position.x, g.transform.position.y, g.transform.position.z - 2));
+    }
+
+    public override void TakeDamage(Property property)
+    {
+        _property.curHealth -= property.dmgSoldier;
+        UpdateHealthBar();
     }
 }

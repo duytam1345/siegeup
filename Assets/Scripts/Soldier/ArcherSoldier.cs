@@ -11,6 +11,11 @@ public class ArcherSoldier : UnitSoldier
             UpdateHealthBar();
         }
 
+        if (Manager.manager.isPause)
+        {
+            return;
+        }
+
         switch (_property.state)
         {
             case State.None:
@@ -22,6 +27,10 @@ public class ArcherSoldier : UnitSoldier
                     {
                         ActTo(u);
                     }
+                }
+                else
+                {
+                    tToCheckNearEnemySecond -= Time.deltaTime;
                 }
 
                 switch (mission)
@@ -80,14 +89,21 @@ public class ArcherSoldier : UnitSoldier
             case State.PutTree:
                 break;
             case State.MoveFight:
-                if (Vector3.Distance(transform.position, targetAttack.transform.position) > 8)
+                if (targetAttack)
                 {
-                    MoveTo(targetAttack.transform.position);
+                    if (Vector3.Distance(transform.position, targetAttack.transform.position) > 8)
+                    {
+                        MoveTo(targetAttack.transform.position);
+                    }
+                    else
+                    {
+                        agent.ResetPath();
+                        _property.state = State.Fight;
+                    }
                 }
                 else
                 {
-                    agent.ResetPath();
-                    _property.state = State.Fight;
+                    _property.state = State.None;
                 }
                 break;
             case State.Fight:

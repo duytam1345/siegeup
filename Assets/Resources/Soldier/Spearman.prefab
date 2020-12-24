@@ -210,10 +210,10 @@ MonoBehaviour:
     _name: Spearman
     id: 0
     description: 
-    maxHealth: 0
-    curHealth: 0
-    dmgConstruct: 0
-    dmgSoldier: 0
+    maxHealth: 150
+    curHealth: 150
+    dmgConstruct: 10
+    dmgSoldier: 15
     colorTeam: 0
     state: 0
   circleSelect: {fileID: 0}
@@ -223,13 +223,18 @@ MonoBehaviour:
   targetVector: {x: 0, y: 0, z: 0}
   targetAttack: {fileID: 0}
   cityHall: {fileID: 0}
-  tToAttack: 0
-  tToAttackSecond: 0
+  controller: {fileID: 0}
+  tToAttack: 1
+  tToAttackSecond: 1
   h: 0
   m: 0
   r: 0
   healthBar: {fileID: 0}
+  tToCheckNearEnemy: 0
+  tToCheckNearEnemySecond: 0
   agent: {fileID: 0}
+  mission: 0
+  vMission: {x: 0, y: 0, z: 0}
   tToGet: 1
   tToGetSecond: 0
   curContain: 0
