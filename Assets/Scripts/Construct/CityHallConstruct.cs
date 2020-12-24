@@ -43,12 +43,18 @@ public class CityHallConstruct : UnitConstruct
             Manager.manager.resourcesGame._food -= 15;
             Manager.manager.UpdateresourcesGame();
         }
+        else
+        {
+            Manager.manager.CreateSlotNoti("Không đủ tài nguyên");
+        }
     }
 
     void CreatePeasant()
     {
         GameObject g = Instantiate(Resources.Load("Soldier/Peasant") as GameObject, posToCreateSoldier.position, Quaternion.identity);
         g.GetComponent<UnitSoldier>().SetMove(new Vector3(g.transform.position.x, g.transform.position.y, g.transform.position.z - 2));
+
+        Manager.manager.AddToCurrentSoldier(g.GetComponent<UnitSoldier>());
     }
 
     public override void TakeDamage(Property property)

@@ -202,9 +202,9 @@ public class Unit : MonoBehaviour
 
         if (_property.curHealth <= 0)
         {
-            if(_property._name == "City Hall")
+            if (_property._name == "City Hall")
             {
-                if(_property.colorTeam == Team.Red)
+                if (_property.colorTeam == Team.Red)
                 {
                     Manager.manager.SetPanelWinLose("Lose");
                 }
@@ -233,9 +233,20 @@ public class Unit : MonoBehaviour
 
     public void OnDeath()
     {
-        if(Manager.manager.listSelected.Contains(this))
+        if (Manager.manager.listSelected.Contains(this))
         {
             Manager.manager.listSelected.Remove(this);
+        }
+
+        if (GetComponent<UnitSoldier>())
+        {
+            Manager.manager.RemoveToCurrentSoldier(GetComponent<UnitSoldier>());
+        }
+
+        if(_property._name == "House")
+        {
+            Manager.manager.resourcesGame._maxSoldier -= 10;
+            Manager.manager.UpdateresourcesGame();
         }
     }
 }

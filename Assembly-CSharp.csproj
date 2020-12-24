@@ -81,6 +81,7 @@
     <Compile Include="Assets\Scripts\Mine.cs" />
     <Compile Include="Assets\Scripts\Mover.cs" />
     <Compile Include="Assets\Scripts\SlotInfo.cs" />
+    <Compile Include="Assets\Scripts\SlotNoti.cs" />
     <Compile Include="Assets\Scripts\Soldier\ArcherSoldier.cs" />
     <Compile Include="Assets\Scripts\Soldier\KnightSoldier.cs" />
     <Compile Include="Assets\Scripts\Soldier\PeasantSoldier.cs" />

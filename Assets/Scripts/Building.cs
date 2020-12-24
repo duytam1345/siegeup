@@ -49,6 +49,12 @@ public class Building : MonoBehaviour
 
     public void SetConstruct()
     {
+        if (n == "House")
+        {
+            Manager.manager.resourcesGame._maxSoldier += 10;
+            Manager.manager.UpdateresourcesGame();
+        }
+
         foreach (var item in trees)
         {
             Destroy(item);
@@ -67,7 +73,7 @@ public class Building : MonoBehaviour
                 }
                 else
                 {
-                    if(!trees.Contains(other.gameObject))
+                    if (!trees.Contains(other.gameObject))
                     {
                         trees.Add(other.gameObject);
                     }
@@ -83,7 +89,7 @@ public class Building : MonoBehaviour
             colliders.Remove(other);
         }
 
-        if(trees.Contains(other.gameObject))
+        if (trees.Contains(other.gameObject))
         {
             trees.Remove(other.gameObject);
         }

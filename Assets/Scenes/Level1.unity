@@ -10023,19 +10023,19 @@ MonoBehaviour:
     n: Farm
     controller: {fileID: 0}
     t: 0
-    tSecond: 0
+    tSecond: 5
   - v: {x: 28, y: 0, z: 85}
     construct: {fileID: 0}
     n: Barracks
     controller: {fileID: 0}
     t: 0
-    tSecond: 0
+    tSecond: 5
   - v: {x: 20, y: 0, z: 93}
     construct: {fileID: 0}
     n: Archer Range
     controller: {fileID: 0}
     t: 0
-    tSecond: 0
+    tSecond: 5
   - v: {x: 43, y: 0, z: 91}
     construct: {fileID: 0}
     n: House
@@ -10078,7 +10078,7 @@ MonoBehaviour:
     amountCreate: 0
     nameCreate: Archerman
     tToCreateR: {x: 30, y: 60}
-    amountR: {x: 5, y: 50}
+    amountR: {x: 5, y: 15}
   CityHallConstruct: {fileID: 7678733553960636033}
   farmConstructs: []
   barracksConstructs: []
@@ -14709,6 +14709,7 @@ MonoBehaviour:
   onMenu: 0
   boxSelection: {fileID: 1003290601}
   listSelected: []
+  currentSoldiers: []
   startPosMouseDown: {x: 0, y: 0}
   endPosMouseUp: {x: 0, y: 0}
   resourcesGame:
@@ -18139,6 +18140,41 @@ MonoBehaviour:
   healthBar: {fileID: 0}
   tToCheckNearEnemy: 0
   tToCheckNearEnemySecond: 0
+--- !u!1 &1727035056
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1727035057}
+  m_Layer: 5
+  m_Name: Noti
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1727035057
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1727035056}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1756496498}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -700, y: 100}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1728833749
 GameObject:
   m_ObjectHideFlags: 0
@@ -18407,6 +18443,7 @@ RectTransform:
   - {fileID: 207427529}
   - {fileID: 660427062}
   - {fileID: 329024969}
+  - {fileID: 1727035057}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

@@ -241,9 +241,9 @@ public class TimeWave
 
                     if (controller.archerRangeConstructs.Count > 0)
                     {
-                        if(!constructToCreate)
+                        if (!constructToCreate)
                         {
-                            if(controller.archerRangeConstructs.Count>0)
+                            if (controller.archerRangeConstructs.Count > 0)
                             {
                                 constructToCreate = controller.archerRangeConstructs[0];
                             }
@@ -257,6 +257,13 @@ public class TimeWave
 
                         GameObject g = GameObject.Instantiate(Resources.Load("Soldier/" + nameCreate) as GameObject,
                             constructToCreate.posToCreateSoldier.position, Quaternion.identity);
+
+                        Vector3 vMove = new Vector3();
+                        vMove.x = Random.Range(-1f, 1f);
+                        vMove.z = Random.Range(0, -2f);
+
+                        g.GetComponent<UnitSoldier>().SetMove(g.transform.position + vMove);
+
                         g.GetComponent<UnitSoldier>()._property.colorTeam = controller.team;
                         g.GetComponent<UnitSoldier>().SetColorTeam();
 

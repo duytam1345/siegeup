@@ -19,7 +19,10 @@ public class ResourcesGame
 public class Manager : MonoBehaviour
 {
     //Làm thêm kẻ địch và hiệu ứng
-    //Các button ui
+    //Các button, hình ảnh ui
+
+    //Làm thông báo
+    //
 
     public static Manager manager;
 
@@ -32,6 +35,8 @@ public class Manager : MonoBehaviour
     public RectTransform boxSelection;
 
     public List<Unit> listSelected;
+
+    public List<UnitSoldier> currentSoldiers;
 
     public Vector2 startPosMouseDown;
     public Vector2 endPosMouseUp;
@@ -76,6 +81,16 @@ public class Manager : MonoBehaviour
 
     private void Start()
     {
+        UnitSoldier[] unitSoldiers = FindObjectsOfType<UnitSoldier>();
+
+        foreach (var item in unitSoldiers)
+        {
+            if (item._property.colorTeam == Team.Red)
+            {
+                AddToCurrentSoldier(item);
+            }
+        }
+
         UpdateresourcesGame();
     }
 
@@ -175,7 +190,7 @@ public class Manager : MonoBehaviour
 
             Vector2 endPosMouseDown = Input.mousePosition;
 
-            if(startPosMouseDown==Vector2.zero)
+            if (startPosMouseDown == Vector2.zero)
             {
                 return;
             }
@@ -406,7 +421,7 @@ public class Manager : MonoBehaviour
         }
         if (textSoldier)
         {
-            textSoldier.text = resourcesGame._soldier + "/" + resourcesGame._maxSoldier;
+            textSoldier.text = currentSoldiers.Count + "/" + resourcesGame._maxSoldier;
         }
     }
 
@@ -584,5 +599,31 @@ public class Manager : MonoBehaviour
     public void BackMenuBtn()
     {
         SceneManager.LoadScene("MainMenu");
+    }
+
+    public void AddToCurrentSoldier(UnitSoldier soldier)
+    {
+        if (!currentSoldiers.Contains(soldier))
+        {
+            currentSoldiers.Add(soldier);
+        }
+
+        UpdateresourcesGame();
+    }
+
+    public void RemoveToCurrentSoldier(UnitSoldier soldier)
+    {
+        if (currentSoldiers.Contains(soldier))
+        {
+            currentSoldiers.Remove(soldier);
+        }
+
+        UpdateresourcesGame();
+    }
+
+    public void CreateSlotNoti(string s)
+    {
+        GameObject g = Instantiate(Resources.Load("UI/SlotNoti") as GameObject, GameObject.Find("Noti").transform);
+        g.GetComponent<Text>().text = s;
     }
 }

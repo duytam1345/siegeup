@@ -51,5 +51,7 @@ public class ArcherRangeConstruct : UnitConstruct
     {
         GameObject g = Instantiate(Resources.Load("Soldier/Archerman") as GameObject, posToCreateSoldier.position, Quaternion.identity);
         g.GetComponent<UnitSoldier>().SetMove(new Vector3(g.transform.position.x, g.transform.position.y, g.transform.position.z - 2));
+
+        Manager.manager.AddToCurrentSoldier(g.GetComponent<UnitSoldier>());
     }
 }
