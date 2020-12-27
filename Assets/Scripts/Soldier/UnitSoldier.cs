@@ -26,14 +26,20 @@ public class UnitSoldier : Unit
 
     public override void MoveTo(Vector3 v)
     {
-        anim.SetBool("Move", true);
+        if (anim)
+        {
+            anim.SetBool("Move", true);
+        }
 
         agent.SetDestination(v);
     }
 
     public void StopMove()
     {
-        anim.SetBool("Move", false);
+        if (anim)
+        {
+            anim.SetBool("Move", false);
+        }
 
         agent.ResetPath();
     }
