@@ -92,7 +92,10 @@ public class PeasantSoldier : UnitSoldier
                 }
                 break;
             case State.PutFarm:
-                Manager.manager.resourcesGame._food += curContain;
+                if (_property.colorTeam == Team.Red)
+                {
+                    Manager.manager.resourcesGame._food += curContain;
+                }
 
                 curContain = 0;
 
@@ -117,15 +120,32 @@ public class PeasantSoldier : UnitSoldier
                 }
                 break;
             case State.GetTree:
-                tToGetSecond += Time.deltaTime;
-                if (tToGetSecond >= tToGet)
+                if (targetTree)
                 {
-                    tToGetSecond = 0;
-
-                    curContain++;
-                    if (curContain >= maxContain)
+                    tToGetSecond += Time.deltaTime;
+                    if (tToGetSecond >= tToGet)
                     {
-                        _property.state = State.BackCityHallTree;
+                        tToGetSecond = 0;
+
+                        curContain++;
+                        targetTree.OnDecreamentWood();
+
+                        if (curContain >= maxContain)
+                        {
+                            _property.state = State.BackCityHallTree;
+                        }
+                    }
+                }
+                else
+                {
+                    TreeUnit tree = GetNearestTreeWithVector3(transform.position);
+                    if(tree)
+                    {
+                        ActTo(tree);
+                    }
+                    else
+                    {
+                        _property.state = State.None;
                     }
                 }
                 break;
@@ -149,7 +169,10 @@ public class PeasantSoldier : UnitSoldier
                 }
                 break;
             case State.PutTree:
-                Manager.manager.resourcesGame._wood += curContain;
+                if (_property.colorTeam == Team.Red)
+                {
+                    Manager.manager.resourcesGame._wood += curContain;
+                }
 
                 curContain = 0;
 
@@ -190,6 +213,8 @@ public class PeasantSoldier : UnitSoldier
 
     public override void TakeDamage(Property property)
     {
+        Manager.manager.CreateBloodEffect(transform.position);
+
         _property.curHealth -= property.dmgSoldier;
         UpdateHealthBar();
     }

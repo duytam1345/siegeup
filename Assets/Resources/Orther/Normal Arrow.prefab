@@ -46,9 +46,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   vTarget: {x: 0, y: 0, z: 0}
   unitTarget: {fileID: 0}
-  speed: 0
+  speed: 10
   property:
     _name: 
+    id: 0
+    description: 
     maxHealth: 0
     curHealth: 0
     dmgConstruct: 0

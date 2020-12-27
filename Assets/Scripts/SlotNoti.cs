@@ -16,12 +16,12 @@ public class SlotNoti : MonoBehaviour
 
     void Update()
     {
-        Vector3 v = rect.position;
-        v.y += 2;
-        rect.position = v;
+        //Vector3 v = rect.position;
+        //v.y += 2;
+        //rect.position = v;
 
-        Color c = text.color;
-        c.a -= .5f * Time.deltaTime;
-        text.color = c;
+        //Color c = text.color;
+        //c.a -= .5f * Time.deltaTime;
+        //text.color = c;
     }
 }

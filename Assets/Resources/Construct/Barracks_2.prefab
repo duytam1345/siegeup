@@ -95,8 +95,8 @@ MonoBehaviour:
     id: 0
     description: "\u0110\xE2y l\xE0 doanh tr\u1EA1i, n\u01A1i hu\u1EA5n luy\u1EC7n
       gi\xE1p binh c\u1EE7a b\u1EA1n."
-    maxHealth: 0
-    curHealth: 0
+    maxHealth: 1000
+    curHealth: 1000
     dmgConstruct: 0
     dmgSoldier: 0
     colorTeam: 0
@@ -111,7 +111,7 @@ MonoBehaviour:
   controller: {fileID: 0}
   tToAttack: 0
   tToAttackSecond: 0
-  h: 0
+  h: 3
   m: 0
   r: 0
   healthBar: {fileID: 0}
@@ -119,6 +119,15 @@ MonoBehaviour:
   tToCheckNearEnemySecond: 0
   posToCreateSoldier: {fileID: 597728373839037982}
   createSpearman:
+    fillAmount: {fileID: 0}
+    textAmount: {fileID: 0}
+    currentCount: 0
+    tToCreate: 2
+    tToCreateSecond: 2
+    t: 0
+  createSwordsman:
+    fillAmount: {fileID: 0}
+    textAmount: {fileID: 0}
     currentCount: 0
     tToCreate: 2
     tToCreateSecond: 2

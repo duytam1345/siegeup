@@ -95,8 +95,8 @@ MonoBehaviour:
     id: 0
     description: "Tr\u01B0\u1EDDng b\u1EAFn, n\u01A1i \u0111\xE0o t\u1EA1o l\xEDnh
       \u0111\xE1nh xa."
-    maxHealth: 0
-    curHealth: 0
+    maxHealth: 750
+    curHealth: 750
     dmgConstruct: 0
     dmgSoldier: 0
     colorTeam: 0
@@ -111,7 +111,7 @@ MonoBehaviour:
   controller: {fileID: 0}
   tToAttack: 0
   tToAttackSecond: 0
-  h: 0
+  h: 3
   m: 0
   r: 0
   healthBar: {fileID: 0}
@@ -119,6 +119,15 @@ MonoBehaviour:
   tToCheckNearEnemySecond: 0
   posToCreateSoldier: {fileID: 597728373839037982}
   createArcherman:
+    fillAmount: {fileID: 0}
+    textAmount: {fileID: 0}
+    currentCount: 0
+    tToCreate: 2
+    tToCreateSecond: 2
+    t: 0
+  createCrossbowman:
+    fillAmount: {fileID: 0}
+    textAmount: {fileID: 0}
     currentCount: 0
     tToCreate: 2
     tToCreateSecond: 2

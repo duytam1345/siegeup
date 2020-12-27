@@ -104,16 +104,27 @@ public class Unit : MonoBehaviour
 
     public void OnSelect()
     {
-        circleSelect.SetActive(true);
+        if (circleSelect)
+        {
+            circleSelect.SetActive(true);
+        }
     }
 
     public void OnDeSelect()
     {
-        circleSelect.SetActive(false);
+        if (circleSelect)
+        {
+            circleSelect.SetActive(false);
+        }
     }
 
     public void SetMove(Vector3 v)
     {
+        if (targetTree)
+        {
+            targetTree.curPeasant = 0;
+        }
+
         if (_property.state == State.Fight)
         {
             tToCheckNearEnemySecond = 5;
@@ -220,6 +231,21 @@ public class Unit : MonoBehaviour
         }
     }
 
+    public void DestroyHealthBar()
+    {
+        if (healthBar)
+        {
+            Destroy(healthBar.gameObject);
+        }
+    }
+
+    /// <summary>
+    /// Tạo đạn
+    /// </summary>
+    /// <param name="nameArrow">Tên</param>
+    /// <param name="p">Thuộc tính</param>
+    /// <param name="speed">Tốc độ</param>
+    /// <param name="target">Mục tiêu</param>
     public void CreateArrow(string nameArrow, Property p, float speed, Unit target)
     {
         GameObject arrow = Instantiate(Resources.Load("Orther/" + nameArrow) as GameObject,
@@ -233,6 +259,11 @@ public class Unit : MonoBehaviour
 
     public void OnDeath()
     {
+        if (targetTree)
+        {
+            targetTree.curPeasant = 0;
+        }
+
         if (Manager.manager.listSelected.Contains(this))
         {
             Manager.manager.listSelected.Remove(this);
@@ -240,10 +271,44 @@ public class Unit : MonoBehaviour
 
         if (GetComponent<UnitSoldier>())
         {
+            int r = Random.Range(10, 20);
+
+            for (int i = 0; i < r; i++)
+            {
+                GameObject g = Instantiate(Resources.Load("Cube") as GameObject,
+                    transform.position + new Vector3(Random.Range(-.5f, .5f), 0, Random.Range(-.5f, .5f)), Quaternion.identity);
+
+                switch (_property.colorTeam)
+                {
+                    case Team.Red:
+                        g.GetComponent<MeshRenderer>().material = Resources.Load("Material/Color/Red") as Material;
+                        break;
+                    case Team.Green:
+                        g.GetComponent<MeshRenderer>().material = Resources.Load("Material/Color/Green") as Material;
+                        break;
+                    case Team.Blue:
+                        break;
+                    case Team.Yellow:
+                        break;
+                    case Team.Pink:
+                        break;
+                    case Team.Gray:
+                        break;
+                    case Team.None:
+                        break;
+                }
+
+                float scale = Random.Range(.05f, .3f);
+
+                g.transform.localScale = new Vector3(scale, scale, scale);
+
+                Destroy(g, 5f);
+            }
+
             Manager.manager.RemoveToCurrentSoldier(GetComponent<UnitSoldier>());
         }
 
-        if(_property._name == "House")
+        if (_property._name == "House")
         {
             Manager.manager.resourcesGame._maxSoldier -= 10;
             Manager.manager.UpdateresourcesGame();

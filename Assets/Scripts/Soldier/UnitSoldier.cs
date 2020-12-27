@@ -31,10 +31,13 @@ public class UnitSoldier : Unit
 
         foreach (var item in trees)
         {
-            if (Vector3.Distance(item.transform.position, v) < minDistance)
+            if (item.curPeasant <= 0)
             {
-                minDistance = Vector3.Distance(item.transform.position, v);
-                nearestTree = item;
+                if (Vector3.Distance(item.transform.position, v) < minDistance)
+                {
+                    minDistance = Vector3.Distance(item.transform.position, v);
+                    nearestTree = item;
+                }
             }
         }
 
@@ -50,12 +53,15 @@ public class UnitSoldier : Unit
 
         foreach (var item in farms)
         {
-            if (item._property.colorTeam == _property.colorTeam)
+            if (item.curPeasant < item.maxPeasant)
             {
-                if (Vector3.Distance(item.transform.position, v) < minDistance)
+                if (item._property.colorTeam == _property.colorTeam)
                 {
-                    minDistance = Vector3.Distance(item.transform.position, v);
-                    nearestFarm = item;
+                    if (Vector3.Distance(item.transform.position, v) < minDistance)
+                    {
+                        minDistance = Vector3.Distance(item.transform.position, v);
+                        nearestFarm = item;
+                    }
                 }
             }
         }
@@ -85,7 +91,7 @@ public class UnitSoldier : Unit
 
     public override void ActTo(Unit unit)
     {
-        if(unit == null)
+        if (unit == null)
         {
             return;
         }
@@ -94,6 +100,11 @@ public class UnitSoldier : Unit
 
         if (unit._property.colorTeam != _property.colorTeam && unit._property.colorTeam != Team.None)
         {
+            if (targetTree)
+            {
+                targetTree.curPeasant = 0;
+            }
+
             targetAttack = unit;
             _property.state = State.MoveFight;
         }
@@ -101,13 +112,36 @@ public class UnitSoldier : Unit
         {
             if (p._name == "Tree")
             {
-                targetTree = unit.GetComponent<TreeUnit>();
-                _property.state = State.MoveTree;
+                if (targetTree)
+                {
+                    targetTree.curPeasant = 0;
+                }
+
+                TreeUnit tree = GetNearestTreeWithVector3(unit.transform.position);
+                if (GetComponent<PeasantSoldier>())
+                {
+                    targetTree = tree;
+                    targetTree.curPeasant++;
+
+                    _property.state = State.MoveTree;
+                }
             }
             else if (p._name == "Farm")
             {
-                targetFarm = unit.GetComponent<FarmConstruct>();
-                _property.state = State.MoveFarm;
+                if (targetTree)
+                {
+                    targetTree.curPeasant = 0;
+                }
+
+                FarmConstruct farm = GetNearestFarmWithVector3(unit.transform.position);
+
+                if (GetComponent<PeasantSoldier>())
+                {
+                    targetFarm = farm;
+                    targetFarm.curPeasant++;
+
+                    _property.state = State.MoveFarm;
+                }
             }
         }
     }

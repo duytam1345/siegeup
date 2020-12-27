@@ -207,7 +207,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _property:
-    _name: Archerman
+    _name: "L\xEDnh cung"
+    id: 0
+    description: 
     maxHealth: 150
     curHealth: 150
     dmgConstruct: 1
@@ -221,13 +223,18 @@ MonoBehaviour:
   targetVector: {x: 0, y: 0, z: 0}
   targetAttack: {fileID: 0}
   cityHall: {fileID: 0}
+  controller: {fileID: 0}
   tToAttack: 1
   tToAttackSecond: 1
   h: 2
   m: 0
   r: 0
   healthBar: {fileID: 0}
+  tToCheckNearEnemy: 0
+  tToCheckNearEnemySecond: 0
   agent: {fileID: 0}
+  mission: 0
+  vMission: {x: 0, y: 0, z: 0}
 --- !u!1 &5612475553871159250
 GameObject:
   m_ObjectHideFlags: 0

@@ -29,6 +29,18 @@ public class Building : MonoBehaviour
 
     private void Update()
     {
+        if (Vector3.Distance(transform.position, Manager.manager.cityHallConstruct.transform.position) > 30)
+        {
+            SetColor("Red");
+            return;
+        }
+
+        if(transform.position.y>.5f)
+        {
+            SetColor("Red");
+            return;
+        }
+
         if (colliders.Count > 0)
         {
             SetColor("Red");
@@ -93,5 +105,22 @@ public class Building : MonoBehaviour
         {
             trees.Remove(other.gameObject);
         }
+    }
+
+    public bool OnClickBuild()
+    {
+        if (Vector3.Distance(transform.position, Manager.manager.cityHallConstruct.transform.position) > 30)
+        {
+            Manager.manager.CreateSlotNoti("Quá xa nhà chính");
+            return false;
+        }
+
+        if (transform.position.y > .5f)
+        {
+            Manager.manager.CreateSlotNoti("Không thể xây trên địa hình này");
+            return false;
+        }
+
+        return true;
     }
 }

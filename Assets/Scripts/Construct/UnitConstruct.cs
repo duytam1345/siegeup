@@ -65,4 +65,25 @@ public class UnitConstruct : Unit
     public Transform posToCreateSoldier;
 
     public virtual void ShowPanel() { }
+
+    public void CheckToEffectFire(int b, int a)
+    {
+        Vector3 v = transform.position;
+
+        v.x += Random.Range(-1.5f, 1.5f);
+        v.z += Random.Range(-1.5f, 1.5f);
+
+        if (b >= 75 && a < 75)
+        {
+            Manager.manager.CreateFireEffect(v, transform.GetChild(2));
+        }
+        else if (b >= 50 && a < 50)
+        {
+            Manager.manager.CreateFireEffect(v, transform.GetChild(2));
+        }
+        else if (b >= 25 && a < 25)
+        {
+            Manager.manager.CreateFireEffect(v, transform.GetChild(2));
+        }
+    }
 }

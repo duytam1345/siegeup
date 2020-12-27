@@ -18,13 +18,14 @@ public class ResourcesGame
 
 public class Manager : MonoBehaviour
 {
-    //Làm thêm kẻ địch và hiệu ứng
-    //Các button, hình ảnh ui
+    //Button quay về menu, chọn màn chơi
+    //Button sữa chữa
 
-    //Làm thông báo
-    //
+    //Sữa lỗi: khi chọn nông dân và nhấp 2 lần vào farm
 
     public static Manager manager;
+
+    public string nameLevel;
 
     public bool isPause;
 
@@ -42,6 +43,11 @@ public class Manager : MonoBehaviour
     public Vector2 endPosMouseUp;
 
     public ResourcesGame resourcesGame;
+
+    public Sprite spriteGold;
+    public Sprite spriteMetal;
+    public Sprite spriteWood;
+    public Sprite spriteFood;
 
     public Text textGold;
     public Text textWood;
@@ -67,7 +73,20 @@ public class Manager : MonoBehaviour
     public GameObject winLosePanel;
     public Text textWinLose;
 
+    public RectTransform ScrollViewNoti;
+
     public GameObject cam;
+
+    public Text textTimeGame;
+
+    public float minute;
+    public float second;
+
+    public CityHallConstruct cityHallConstruct;
+
+    public GameObject menuPanel;
+
+    public GameObject optionPanel;
 
     private void Awake()
     {
@@ -100,6 +119,8 @@ public class Manager : MonoBehaviour
         {
             return;
         }
+
+        SetTimeInGame();
 
         if (onMenu)
         {
@@ -152,8 +173,19 @@ public class Manager : MonoBehaviour
                 }
                 else
                 {
-                    if (currentToBuild.GetComponent<Building>().colliders.Count <= 0)
+                    if (currentToBuild.GetComponent<Building>().OnClickBuild())
                     {
+                        int r = Random.Range(5, 20);
+                        float minX = currentToBuild.transform.position.x - 2;
+                        float minY = currentToBuild.transform.position.z - 2;
+                        float maxX = currentToBuild.transform.position.x + 2;
+                        float maxY = currentToBuild.transform.position.z + 2;
+
+                        for (int i = 0; i < r; i++)
+                        {
+                            CreateSmokeEffect(new Vector3(Random.Range(minX, maxX), 1, Random.Range(minY, maxY)));
+                        }
+
                         switch (currentToBuild.GetComponent<Building>().n)
                         {
                             case "Archer Range":
@@ -345,6 +377,8 @@ public class Manager : MonoBehaviour
 
             foreach (var item in units)
             {
+                item.UpdateHealthBar();
+
                 if (keyValues.ContainsKey(item._property._name))
                 {
                     keyValues[item._property._name]++;
@@ -392,6 +426,7 @@ public class Manager : MonoBehaviour
     {
         foreach (var item in listSelected)
         {
+            item.DestroyHealthBar();
             item.OnDeSelect();
         }
 
@@ -436,21 +471,25 @@ public class Manager : MonoBehaviour
     /// </summary>
     public void BuildConstruct(string n)
     {
-        if (!currentToBuild)
+        if (!isPause)
         {
-            if (!EnoughResource(n))
+            if (!currentToBuild)
             {
-                return;
+                if (!EnoughResource(n))
+                {
+                    CreateSlotNoti("Không đủ tài nguyên");
+                    return;
+                }
+
+                currentToBuild = Instantiate(Resources.Load("Construct/" + n + "_1") as GameObject, Vector2.zero, Quaternion.identity);
+                currentToBuild.GetComponent<Building>().n = n;
+
+                btnCancelBuild.SetActive(true);
+                buildPanel.SetActive(false);
+                buildBtn.SetActive(false);
+
+                firstMouseDown = true;
             }
-
-            currentToBuild = Instantiate(Resources.Load("Construct/" + n + "_1") as GameObject, Vector2.zero, Quaternion.identity);
-            currentToBuild.GetComponent<Building>().n = n;
-
-            btnCancelBuild.SetActive(true);
-            buildPanel.SetActive(false);
-            buildBtn.SetActive(false);
-
-            firstMouseDown = true;
         }
     }
 
@@ -458,6 +497,7 @@ public class Manager : MonoBehaviour
     {
         int needWood = 0;
         int needMetal = 0;
+        int needGold = 0;
 
         switch (s)
         {
@@ -468,14 +508,16 @@ public class Manager : MonoBehaviour
                 needWood = 30;
                 break;
             case "Barracks":
+                needGold = 10;
                 needMetal = 25;
                 break;
             case "Archer Range":
+                needGold = 20;
                 needWood = 20;
                 break;
         }
 
-        if (resourcesGame._wood >= needWood && resourcesGame._metal >= needMetal)
+        if (resourcesGame._wood >= needWood && resourcesGame._metal >= needMetal && resourcesGame._gold >= needGold)
         {
             return true;
         }
@@ -487,17 +529,23 @@ public class Manager : MonoBehaviour
 
     public void BuildBtnOnClick()
     {
-        buildBtn.SetActive(false);
-        buildPanel.SetActive(true);
-        infoPanel.SetActive(false);
+        if (!isPause)
+        {
+            buildBtn.SetActive(false);
+            buildPanel.SetActive(true);
+            infoPanel.SetActive(false);
+        }
     }
 
     public void DescriptionBtnOnClick()
     {
-        if (listSelected.Count > 0 && listSelected.Count < 2)
+        if (!isPause)
         {
-            descriptionText.text = listSelected[0]._property.description;
-            descriptionPanel.SetActive(true);
+            if (listSelected.Count > 0 && listSelected.Count < 2)
+            {
+                descriptionText.text = listSelected[0]._property.description;
+                descriptionPanel.SetActive(true);
+            }
         }
     }
 
@@ -537,33 +585,45 @@ public class Manager : MonoBehaviour
 
         if (Input.GetKey(KeyCode.W))
         {
-            Vector3 pos = cam.transform.position;
-            pos += cam.transform.forward * .5f;
+            if (cam.transform.position.z < 100)
+            {
+                Vector3 pos = cam.transform.position;
+                pos += cam.transform.forward * .5f;
 
-            cam.transform.position = pos;
+                cam.transform.position = pos;
+            }
         }
         if (Input.GetKey(KeyCode.S))
         {
-            Vector3 pos = cam.transform.position;
-            pos -= cam.transform.forward * .5f;
+            if (cam.transform.position.z > 0)
+            {
+                Vector3 pos = cam.transform.position;
+                pos -= cam.transform.forward * .5f;
 
-            cam.transform.position = pos;
+                cam.transform.position = pos;
+            }
         }
 
         if (Input.GetKey(KeyCode.A))
         {
-            Vector3 pos = cam.transform.position;
-            pos -= cam.transform.right * .5f;
+            if (cam.transform.position.x > 0)
+            {
+                Vector3 pos = cam.transform.position;
+                pos -= cam.transform.right * .5f;
 
-            cam.transform.position = pos;
+                cam.transform.position = pos;
+            }
         }
 
         if (Input.GetKey(KeyCode.D))
         {
-            Vector3 pos = cam.transform.position;
-            pos += cam.transform.right * .5f;
+            if (cam.transform.position.x < 100)
+            {
+                Vector3 pos = cam.transform.position;
+                pos += cam.transform.right * .5f;
 
-            cam.transform.position = pos;
+                cam.transform.position = pos;
+            }
         }
     }
 
@@ -623,7 +683,156 @@ public class Manager : MonoBehaviour
 
     public void CreateSlotNoti(string s)
     {
-        GameObject g = Instantiate(Resources.Load("UI/SlotNoti") as GameObject, GameObject.Find("Noti").transform);
-        g.GetComponent<Text>().text = s;
+        Transform noti = GameObject.Find("Noti").transform;
+
+        noti.GetComponent<RectTransform>().sizeDelta = new Vector2(0, Mathf.Clamp(noti.childCount * 40, 405, 40000));
+
+        GameObject g = Instantiate(Resources.Load("UI/SlotNoti") as GameObject, noti);
+        g.GetComponent<Text>().text = "[" + minute.ToString("00") + ":" + second.ToString("00") + "]" + s;
+    }
+
+    public void CreateSlotMaterial(Transform trans, string s, int i)
+    {
+        GameObject g1 = Instantiate(Resources.Load("UI/Slot Material") as GameObject, trans);
+        g1.transform.GetChild(1).GetComponent<Text>().text = i.ToString();
+
+        if (s == "Thực")
+        {
+            g1.transform.GetChild(0).GetComponent<Image>().sprite = spriteFood;
+        }
+        else if (s == "Gỗ")
+        {
+            g1.transform.GetChild(0).GetComponent<Image>().sprite = spriteWood;
+        }
+        else if (s == "Vàng")
+        {
+            g1.transform.GetChild(0).GetComponent<Image>().sprite = spriteGold;
+        }
+        else if (s == "Sắt")
+        {
+            g1.transform.GetChild(0).GetComponent<Image>().sprite = spriteMetal;
+        }
+    }
+
+    public void CreateBloodEffect(Vector3 v)
+    {
+        GameObject g = Instantiate(Resources.Load("Blood Effect") as GameObject, v, Quaternion.identity);
+        Destroy(g, 1);
+    }
+
+    public void CreateSmokeEffect(Vector3 v)
+    {
+        GameObject g = Instantiate(Resources.Load("Smoke Effect") as GameObject, v, Quaternion.identity);
+        Destroy(g, Random.Range(.5f, 2f));
+    }
+
+    void SetTimeInGame()
+    {
+        second += Time.deltaTime;
+
+        if (second >= 60)
+        {
+            second = 0;
+            minute++;
+        }
+
+        if (textTimeGame)
+        {
+            textTimeGame.text = minute.ToString("00") + ":" + second.ToString("00");
+        }
+    }
+
+    public void MenuBtn()
+    {
+        menuPanel.SetActive(!menuPanel.activeInHierarchy);
+        isPause = menuPanel.activeInHierarchy;
+        Time.timeScale = menuPanel.activeInHierarchy ? 0 : 1;
+    }
+
+    public void BtnHideListNoti()
+    {
+        if (ScrollViewNoti.anchoredPosition3D.x > -700)
+        {
+            StartCoroutine(HideListNotiCo());
+        }
+        else if (ScrollViewNoti.anchoredPosition3D.x < -1200)
+        {
+            StartCoroutine(ShowListNotiCo());
+        }
+    }
+
+    IEnumerator HideListNotiCo()
+    {
+        Vector3 v = ScrollViewNoti.anchoredPosition3D;
+        while (ScrollViewNoti.anchoredPosition3D.x > -1200)
+        {
+            v.x -= 20;
+            ScrollViewNoti.anchoredPosition3D = v;
+            yield return new WaitForSeconds(Time.deltaTime);
+        }
+    }
+
+    IEnumerator ShowListNotiCo()
+    {
+        Vector3 v = ScrollViewNoti.anchoredPosition3D;
+        while (ScrollViewNoti.anchoredPosition3D.x < -700)
+        {
+            v.x += 20;
+            ScrollViewNoti.anchoredPosition3D = v;
+            yield return new WaitForSeconds(Time.deltaTime);
+        }
+    }
+
+    /// <summary>
+    /// Tạo cây
+    /// </summary>
+    /// <param name="v">Vị trí tạo</param>
+    public void RespawnTree(Vector3 v)
+    {
+        StartCoroutine(RespawnTreeCo(v));
+    }
+
+    IEnumerator RespawnTreeCo(Vector3 v)
+    {
+        float t = Random.Range(30f, 60f);
+
+        yield return new WaitForSeconds(t);
+
+        GameObject g = Instantiate(Resources.Load("Tree") as GameObject, v, Quaternion.identity);
+    }
+
+    /// <summary>
+    /// Tạo hiệu ứng lửa
+    /// </summary>
+    /// <param name="v">Vị trí</param>
+    /// <param name="parent">Parent</param>
+    public void CreateFireEffect(Vector3 v, Transform parent)
+    {
+        GameObject g = Instantiate(Resources.Load("Fire Effect") as GameObject, v, Quaternion.identity, parent);
+    }
+
+    public void SaveBtn()
+    {
+        print("Saved");
+    }
+
+    public void LoadBtn()
+    {
+        print("Loaded");
+    }
+
+    public void OptionBtn()
+    {
+        optionPanel.SetActive(!optionPanel.activeInHierarchy);
+    }
+
+    public void RestartLevelBtn()
+    {
+        SceneManager.LoadScene(nameLevel);
+    }
+
+    public void ExitBtn()
+    {
+
     }
 }

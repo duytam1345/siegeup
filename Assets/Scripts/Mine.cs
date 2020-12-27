@@ -16,6 +16,11 @@ public class Mine : Unit
 
     private void Update()
     {
+        if (Manager.manager.isPause)
+        {
+            return;
+        }
+
         t -= Time.deltaTime;
 
         if (typeMine == TypeMine.Gold)

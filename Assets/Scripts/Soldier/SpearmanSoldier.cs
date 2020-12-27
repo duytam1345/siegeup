@@ -126,6 +126,8 @@ public class SpearmanSoldier : UnitSoldier
 
     public override void TakeDamage(Property property)
     {
+        Manager.manager.CreateBloodEffect(transform.position);
+        
         _property.curHealth -= property.dmgSoldier;
         UpdateHealthBar();
     }

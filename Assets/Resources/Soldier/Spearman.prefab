@@ -207,7 +207,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _property:
-    _name: Spearman
+    _name: "L\xEDnh gi\xE1o"
     id: 0
     description: 
     maxHealth: 150

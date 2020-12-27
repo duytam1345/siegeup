@@ -29,7 +29,9 @@ public class CityHallConstruct : UnitConstruct
     {
         GameObject g = Instantiate(Resources.Load("UI/Slot Button") as GameObject, Manager.manager.contentInfoPanel);
         g.GetComponent<Button>().onClick.AddListener(delegate { OnClickCreatePeasant(); });
-        g.transform.GetChild(0).GetComponent<Text>().text = "Peasant";
+        g.transform.GetChild(0).GetComponent<Text>().text = "Nông dân";
+
+        Manager.manager.CreateSlotMaterial(g.transform.GetChild(2), "Thực", 15);
 
         createPeasant.fillAmount = g.transform.GetChild(1).GetChild(0).GetComponent<Image>();
         createPeasant.textAmount = g.transform.GetChild(1).GetChild(1).GetComponent<Text>();
@@ -59,6 +61,11 @@ public class CityHallConstruct : UnitConstruct
 
     public override void TakeDamage(Property property)
     {
+        float before = (float)_property.curHealth / (float)_property.maxHealth * 100;
+        float after = ((float)_property.curHealth - (float)property.dmgConstruct) / (float)_property.maxHealth * 100;
+
+        CheckToEffectFire((int)before, (int)after);
+
         _property.curHealth -= property.dmgSoldier;
         UpdateHealthBar();
     }

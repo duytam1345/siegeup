@@ -327,8 +327,8 @@ MonoBehaviour:
     _name: 
     id: 0
     description: "\u0110\xE2y l\xE0 nh\xE0 ch\xEDnh...."
-    maxHealth: 0
-    curHealth: 0
+    maxHealth: 1500
+    curHealth: 1500
     dmgConstruct: 0
     dmgSoldier: 0
     colorTeam: 0
@@ -343,7 +343,7 @@ MonoBehaviour:
   controller: {fileID: 0}
   tToAttack: 0
   tToAttackSecond: 0
-  h: 0
+  h: 3
   m: 0
   r: 0
   healthBar: {fileID: 0}
@@ -351,6 +351,8 @@ MonoBehaviour:
   tToCheckNearEnemySecond: 0
   posToCreateSoldier: {fileID: 1825066804}
   createPeasant:
+    fillAmount: {fileID: 0}
+    textAmount: {fileID: 0}
     currentCount: 0
     tToCreate: 2
     tToCreateSecond: 2

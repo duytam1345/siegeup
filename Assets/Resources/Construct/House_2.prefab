@@ -31,6 +31,7 @@ Transform:
   m_Children:
   - {fileID: 6710417183383474651}
   - {fileID: 6710417182842336415}
+  - {fileID: 4374229262781976053}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -61,8 +62,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _property:
     _name: House
-    maxHealth: 0
-    curHealth: 0
+    id: 0
+    description: 
+    maxHealth: 150
+    curHealth: 150
     dmgConstruct: 0
     dmgSoldier: 0
     colorTeam: 0
@@ -74,12 +77,16 @@ MonoBehaviour:
   targetVector: {x: 0, y: 0, z: 0}
   targetAttack: {fileID: 0}
   cityHall: {fileID: 0}
+  controller: {fileID: 0}
   tToAttack: 0
   tToAttackSecond: 0
-  h: 0
+  h: 3
   m: 0
   r: 0
   healthBar: {fileID: 0}
+  tToCheckNearEnemy: 0
+  tToCheckNearEnemySecond: 0
+  posToCreateSoldier: {fileID: 0}
 --- !u!1 &6710417181756092690
 GameObject:
   m_ObjectHideFlags: 0
@@ -312,4 +319,34 @@ Transform:
   - {fileID: 6710417181756092691}
   m_Father: {fileID: 6710417181304438924}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7115778918672697058
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4374229262781976053}
+  m_Layer: 9
+  m_Name: GameObject (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4374229262781976053
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7115778918672697058}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6710417181304438924}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

@@ -11,7 +11,12 @@ public class Mover : MonoBehaviour
 
     private void Update()
     {
-        if(vTarget==Vector3.zero)
+        if (Manager.manager.isPause)
+        {
+            return;
+        }
+
+        if (vTarget == Vector3.zero)
         {
             return;
         }

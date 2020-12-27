@@ -114,7 +114,7 @@ public class ArcherSoldier : UnitSoldier
                         if (Attack1())
                         {
                             //Tạo mũi tên
-                            CreateArrow("Normal Arrow", _property, 10, targetAttack);
+                            CreateArrow("Normal Arrow", _property, 50, targetAttack);
                         }
                     }
                     else
@@ -133,6 +133,8 @@ public class ArcherSoldier : UnitSoldier
 
     public override void TakeDamage(Property property)
     {
+        Manager.manager.CreateBloodEffect(transform.position);
+
         _property.curHealth -= property.dmgSoldier;
         UpdateHealthBar();
     }
