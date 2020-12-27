@@ -11,15 +11,31 @@ public class UnitSoldier : Unit
     public Mission mission;
     public Vector3 vMission;
 
+    public Animator anim;
+
     public override void Start()
     {
         base.Start();
         agent = GetComponent<NavMeshAgent>();
+
+        if (transform.GetChild(1).GetChild(0).GetComponent<Animator>())
+        {
+            anim = transform.GetChild(1).GetChild(0).GetComponent<Animator>();
+        }
     }
 
     public override void MoveTo(Vector3 v)
     {
+        anim.SetBool("Move", true);
+
         agent.SetDestination(v);
+    }
+
+    public void StopMove()
+    {
+        anim.SetBool("Move", false);
+
+        agent.ResetPath();
     }
 
     public TreeUnit GetNearestTreeWithVector3(Vector3 v)

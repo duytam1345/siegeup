@@ -87,7 +87,10 @@ public class Unit : MonoBehaviour
 
         foreach (Transform item in transform.GetChild(1).transform)
         {
-            meshRenderers.Add(item.GetComponent<MeshRenderer>());
+            if (item.GetComponent<MeshRenderer>() != null)
+            {
+                meshRenderers.Add(item.GetComponent<MeshRenderer>());
+            }
         }
 
         SetColorTeam();

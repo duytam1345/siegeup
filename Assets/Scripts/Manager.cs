@@ -84,9 +84,16 @@ public class Manager : MonoBehaviour
 
     public CityHallConstruct cityHallConstruct;
 
+    [Header("Menu")]
     public GameObject menuPanel;
 
     public GameObject optionPanel;
+
+    public Text textMusic;
+
+    public Text textSound;
+
+    public Text textCameraSpeed;
 
     private void Awake()
     {

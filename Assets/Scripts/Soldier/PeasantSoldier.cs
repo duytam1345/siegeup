@@ -39,7 +39,9 @@ public class PeasantSoldier : UnitSoldier
                 }
                 else
                 {
-                    agent.ResetPath();
+                    anim.SetBool("Move", false);
+
+                    StopMove();
                     _property.state = State.None;
                 }
                 break;
@@ -52,7 +54,7 @@ public class PeasantSoldier : UnitSoldier
                     }
                     else
                     {
-                        agent.ResetPath();
+                        StopMove();
                         _property.state = State.GetFarm;
 
                         tToGetSecond = 0;
@@ -81,14 +83,14 @@ public class PeasantSoldier : UnitSoldier
                     }
                     else
                     {
-                        agent.ResetPath();
+                        StopMove();
 
                         _property.state = State.PutFarm;
                     }
                 }
                 else
                 {
-                    agent.ResetPath();
+                    StopMove();
                 }
                 break;
             case State.PutFarm:
@@ -112,7 +114,7 @@ public class PeasantSoldier : UnitSoldier
                     }
                     else
                     {
-                        agent.ResetPath();
+                        StopMove();
                         _property.state = State.GetTree;
 
                         tToGetSecond = 0;
@@ -158,14 +160,14 @@ public class PeasantSoldier : UnitSoldier
                     }
                     else
                     {
-                        agent.ResetPath();
+                        StopMove();
 
                         _property.state = State.PutTree;
                     }
                 }
                 else
                 {
-                    agent.ResetPath();
+                    StopMove();
                 }
                 break;
             case State.PutTree:
@@ -189,7 +191,7 @@ public class PeasantSoldier : UnitSoldier
                     }
                     else
                     {
-                        agent.ResetPath();
+                        StopMove();
                         _property.state = State.Fight;
                     }
                 }
@@ -204,7 +206,7 @@ public class PeasantSoldier : UnitSoldier
                 }
                 else
                 {
-                    agent.ResetPath();
+                    StopMove();
                     _property.state = State.None;
                 }
                 break;
