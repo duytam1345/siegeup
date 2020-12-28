@@ -21,8 +21,6 @@ public class Manager : MonoBehaviour
     //Button quay về menu, chọn màn chơi
     //Button sữa chữa
 
-    //Sữa lỗi: khi chọn nông dân và nhấp 2 lần vào farm
-
     public static Manager manager;
 
     public string nameLevel;
@@ -36,6 +34,9 @@ public class Manager : MonoBehaviour
     public RectTransform boxSelection;
 
     public List<Unit> listSelected;
+
+    public bool isMultiSelectMode;
+    public Button multiSelectBtn;
 
     public List<UnitSoldier> currentSoldiers;
 
@@ -94,6 +95,8 @@ public class Manager : MonoBehaviour
     public Text textSound;
 
     public Text textCameraSpeed;
+
+    public GameObject confirmExitPanel;
 
     private void Awake()
     {
@@ -159,14 +162,21 @@ public class Manager : MonoBehaviour
             {
                 return;
             }
-            startPosMouseDown = Input.mousePosition;
+
+            if (isMultiSelectMode)
+            {
+                startPosMouseDown = Input.mousePosition;
+            }
         }
 
         if (Input.GetMouseButton(0))
         {
-            if (startPosMouseDown != Vector2.zero && !currentToBuild)
+            if (isMultiSelectMode)
             {
-                SetSelectionBox(Input.mousePosition);
+                if (startPosMouseDown != Vector2.zero && !currentToBuild)
+                {
+                    SetSelectionBox(Input.mousePosition);
+                }
             }
         }
 
@@ -227,86 +237,21 @@ public class Manager : MonoBehaviour
                 }
             }
 
-            Vector2 endPosMouseDown = Input.mousePosition;
-
-            if (startPosMouseDown == Vector2.zero)
+            if (MouseOnUI())
             {
                 return;
             }
 
-            //click
-            if (Vector2.Distance(endPosMouseDown, startPosMouseDown) <= 10)
+            if (isMultiSelectMode)
             {
-                RaycastHit hit;
-                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
+                Vector2 endPosMouseDown = Input.mousePosition;
+
+                if (startPosMouseDown == Vector2.zero)
                 {
-                    if (hit.collider.gameObject.layer == 9)
-                    {
-                        Unit unit = hit.collider.gameObject.GetComponent<Unit>();
-
-                        if (listSelected.Count > 0)
-                        {
-                            foreach (var item in listSelected)
-                            {
-                                item.ActTo(unit);
-
-                                descriptionBtn.SetActive(false);
-                            }
-                        }
-                        else
-                        {
-                            if (unit.GetComponent<UnitConstruct>())
-                            {
-                                listSelected.Clear();
-                                listSelected.Add(unit);
-
-                                infoPanel.SetActive(true);
-                                unit.OnSelect();
-
-                                foreach (Transform item in contentInfoPanel)
-                                {
-                                    Destroy(item.gameObject);
-                                }
-
-                                unit.GetComponent<UnitConstruct>().ShowPanel();
-                                descriptionBtn.SetActive(true);
-
-                                buildPanel.SetActive(false);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        int c = listSelected.Count;
-                        float sqrt = Mathf.Sqrt(c);
-                        while ((int)sqrt != sqrt)
-                        {
-                            c++;
-                            sqrt = Mathf.Sqrt(c);
-                        }
-
-                        List<Vector3> v = new List<Vector3>();
-                        for (int i = 0; i < sqrt; i++)
-                        {
-                            for (int j = 0; j < sqrt; j++)
-                            {
-                                Vector3 newV = hit.point - listSelected[0].transform.position + new Vector3(i, 0, j);
-                                v.Add(newV);
-                            }
-                        }
-
-                        for (int i = 0; i < listSelected.Count; i++)
-                        {
-                            listSelected[i].SetMove(listSelected[0].transform.position + v[i]);
-                        }
-
-                        descriptionBtn.SetActive(false);
-                    }
+                    return;
                 }
-            }
-            //drag
-            else
-            {
+
+                //drag
                 descriptionBtn.SetActive(false);
 
 
@@ -350,8 +295,86 @@ public class Manager : MonoBehaviour
                 }
 
                 boxSelection.gameObject.SetActive(false);
+                startPosMouseDown = Vector2.zero;
+
+                MultiSelectBtn();
+
             }
-            startPosMouseDown = Vector2.zero;
+            //Nhấp chọn
+            else
+            {
+                RaycastHit hit;
+                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
+                {
+                    if (hit.collider.gameObject.layer == 9)
+                    {
+                        Unit unit = hit.collider.gameObject.GetComponent<Unit>();
+
+                        if (listSelected.Count > 0)
+                        {
+                            foreach (var item in listSelected)
+                            {
+                                item.ActTo(unit);
+
+                                descriptionBtn.SetActive(false);
+                            }
+                        }
+                        else
+                        {
+                            listSelected.Clear();
+                            listSelected.Add(unit);
+
+                            infoPanel.SetActive(true);
+                            unit.OnSelect();
+
+                            foreach (Transform item in contentInfoPanel)
+                            {
+                                Destroy(item.gameObject);
+                            }
+
+                            unit.GetComponent<UnitConstruct>().ShowPanel();
+                            descriptionBtn.SetActive(true);
+
+                            buildPanel.SetActive(false);
+                        }
+                    }
+                    else
+                    {
+                        if (listSelected.Count > 0 && listSelected[0].GetComponent<UnitSoldier>())
+                        {
+
+                            int c = listSelected.Count;
+                            float sqrt = Mathf.Sqrt(c);
+                            while ((int)sqrt != sqrt)
+                            {
+                                c++;
+                                sqrt = Mathf.Sqrt(c);
+                            }
+
+                            List<Vector3> v = new List<Vector3>();
+                            for (int i = 0; i < sqrt; i++)
+                            {
+                                for (int j = 0; j < sqrt; j++)
+                                {
+                                    Vector3 newV = hit.point - listSelected[0].transform.position + new Vector3(i, 0, j);
+                                    v.Add(newV);
+                                }
+                            }
+
+                            for (int i = 0; i < listSelected.Count; i++)
+                            {
+                                listSelected[i].SetMove(listSelected[0].transform.position + v[i]);
+                            }
+                        }
+                        else if (listSelected.Count > 0 && listSelected[0].GetComponent<UnitConstruct>())
+                        {
+                            infoPanel.SetActive(false);
+                            DeSelectAll();
+                        }
+                        descriptionBtn.SetActive(false);
+                    }
+                }
+            }
         }
     }
 
@@ -818,6 +841,26 @@ public class Manager : MonoBehaviour
         GameObject g = Instantiate(Resources.Load("Fire Effect") as GameObject, v, Quaternion.identity, parent);
     }
 
+    public void MultiSelectBtn()
+    {
+        isMultiSelectMode = !isMultiSelectMode;
+
+        ColorBlock color = multiSelectBtn.colors;
+        Text t = multiSelectBtn.transform.GetChild(0).GetComponent<Text>();
+        if (isMultiSelectMode)
+        {
+            color.normalColor = new Color(0, .75f, 0, 1);
+            t.color = Color.white;
+        }
+        else
+        {
+            color.normalColor = new Color(1, 1, 1,1);
+            t.color = Color.black;
+        }
+
+        multiSelectBtn.colors = color;
+    }
+
     public void SaveBtn()
     {
         print("Saved");
@@ -850,11 +893,20 @@ public class Manager : MonoBehaviour
 
     public void OnValueChangeCameraSpeed(Scrollbar scrollbar)
     {
-        textCameraSpeed.text = Mathf.RoundToInt((scrollbar.value+.5f) * 100) + "%";
+        textCameraSpeed.text = Mathf.RoundToInt((scrollbar.value + .5f) * 100) + "%";
     }
 
     public void ExitBtn()
     {
+        confirmExitPanel.SetActive(true);
+    }
 
+    public void YesExitBtn()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
+    public void NoExitBtn()
+    {
+        confirmExitPanel.SetActive(false);
     }
 }

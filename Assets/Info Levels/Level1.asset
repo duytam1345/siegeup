@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Level1
   m_EditorClassIdentifier: 
   nameLevel: "B\u1EAFt \u0110\u1EA7u"
-  infoLevel: "Th\xF4ng tin m\xE0n 1"
+  infoLevel: "S\u1EF1 kh\u1EDFi \u0111\u1EA7u c\u1EE7a m\u1ED9t \u0111\u1EBF ch\u1EBF."
   newObjects:
   - nameObject: 0
   - nameObject: 1
