@@ -334,11 +334,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c789098a164c7c14680aff2dba12e6aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nameLevel: 
   isPause: 0
   testMode: 0
   onMenu: 1
   boxSelection: {fileID: 0}
   listSelected: []
+  isMultiSelectMode: 0
+  multiSelectBtn: {fileID: 0}
   currentSoldiers: []
   startPosMouseDown: {x: 0, y: 0}
   endPosMouseUp: {x: 0, y: 0}
@@ -377,6 +380,12 @@ MonoBehaviour:
   minute: 0
   second: 0
   cityHallConstruct: {fileID: 0}
+  menuPanel: {fileID: 0}
+  optionPanel: {fileID: 0}
+  textMusic: {fileID: 0}
+  textSound: {fileID: 0}
+  textCameraSpeed: {fileID: 0}
+  confirmExitPanel: {fileID: 0}
 --- !u!1 &139021131
 GameObject:
   m_ObjectHideFlags: 0
@@ -757,6 +766,7 @@ MonoBehaviour:
   agent: {fileID: 0}
   mission: 0
   vMission: {x: 0, y: 0, z: 0}
+  anim: {fileID: 0}
   tToGet: 1
   tToGetSecond: 0
   curContain: 0
@@ -2182,6 +2192,7 @@ MonoBehaviour:
   agent: {fileID: 0}
   mission: 0
   vMission: {x: 0, y: 0, z: 0}
+  anim: {fileID: 0}
   tToGet: 1
   tToGetSecond: 0
   curContain: 0
@@ -3116,6 +3127,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1453710434}
   m_CullTransparentMesh: 0
+--- !u!1 &1553904883
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1553904884}
+  - component: {fileID: 1553904885}
+  m_Layer: 0
+  m_Name: Master
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1553904884
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1553904883}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 15
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1553904885
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1553904883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3d4a37052f734849970d71123466824, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundPercent: 0
+  musicPercent: 0
+  cameraSpeed: 0
 --- !u!1 &1556191176
 GameObject:
   m_ObjectHideFlags: 0
@@ -7443,6 +7500,7 @@ MonoBehaviour:
   agent: {fileID: 0}
   mission: 0
   vMission: {x: 0, y: 0, z: 0}
+  anim: {fileID: 0}
   tToGet: 1
   tToGetSecond: 0
   curContain: 0

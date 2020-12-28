@@ -854,7 +854,7 @@ public class Manager : MonoBehaviour
         }
         else
         {
-            color.normalColor = new Color(1, 1, 1,1);
+            color.normalColor = new Color(1, 1, 1, 1);
             t.color = Color.black;
         }
 
@@ -874,6 +874,7 @@ public class Manager : MonoBehaviour
     public void OptionBtn()
     {
         optionPanel.SetActive(!optionPanel.activeInHierarchy);
+
     }
 
     public void RestartLevelBtn()
@@ -888,12 +889,18 @@ public class Manager : MonoBehaviour
 
     public void OnValueChangeSound(Scrollbar scrollbar)
     {
-        textSound.text = Mathf.RoundToInt(scrollbar.value * 100) + "%";
+        int i = Mathf.RoundToInt(scrollbar.value * 100);
+
+        textSound.text = i + "%";
+
+        MasterManager.master.SetSound(i);
     }
 
     public void OnValueChangeCameraSpeed(Scrollbar scrollbar)
     {
-        textCameraSpeed.text = Mathf.RoundToInt((scrollbar.value + .5f) * 100) + "%";
+        int i = Mathf.RoundToInt((scrollbar.value + .5f) * 100);
+
+        textCameraSpeed.text = i + "%";
     }
 
     public void ExitBtn()
