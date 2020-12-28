@@ -140,6 +140,12 @@ public class UnitSoldier : Unit
                 }
 
                 TreeUnit tree = GetNearestTreeWithVector3(unit.transform.position);
+
+                if(!tree)
+                {
+                    return;
+                }
+
                 if (GetComponent<PeasantSoldier>())
                 {
                     targetTree = tree;
@@ -156,6 +162,10 @@ public class UnitSoldier : Unit
                 }
 
                 FarmConstruct farm = GetNearestFarmWithVector3(unit.transform.position);
+                if(!farm)
+                {
+                    return;
+                }
 
                 if (GetComponent<PeasantSoldier>())
                 {

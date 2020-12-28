@@ -838,6 +838,21 @@ public class Manager : MonoBehaviour
         SceneManager.LoadScene(nameLevel);
     }
 
+    public void OnValueChangeMusic(Scrollbar scrollbar)
+    {
+        textMusic.text = Mathf.RoundToInt(scrollbar.value * 100) + "%";
+    }
+
+    public void OnValueChangeSound(Scrollbar scrollbar)
+    {
+        textSound.text = Mathf.RoundToInt(scrollbar.value * 100) + "%";
+    }
+
+    public void OnValueChangeCameraSpeed(Scrollbar scrollbar)
+    {
+        textCameraSpeed.text = Mathf.RoundToInt((scrollbar.value+.5f) * 100) + "%";
+    }
+
     public void ExitBtn()
     {
 

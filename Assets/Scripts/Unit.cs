@@ -128,6 +128,11 @@ public class Unit : MonoBehaviour
             targetTree.curPeasant = 0;
         }
 
+        if (targetFarm)
+        {
+            targetFarm.curPeasant = 0;
+        }
+
         if (_property.state == State.Fight)
         {
             tToCheckNearEnemySecond = 5;
