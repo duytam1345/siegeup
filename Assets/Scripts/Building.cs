@@ -35,7 +35,7 @@ public class Building : MonoBehaviour
             return;
         }
 
-        if(transform.position.y>.5f)
+        if (transform.position.y > .5f)
         {
             SetColor("Red");
             return;
@@ -118,6 +118,12 @@ public class Building : MonoBehaviour
         if (transform.position.y > .5f)
         {
             Manager.manager.CreateSlotNoti("Không thể xây trên địa hình này");
+            return false;
+        }
+
+        if (colliders.Count > 0)
+        {
+            Manager.manager.CreateSlotNoti("Không thể xây tại đây");
             return false;
         }
 

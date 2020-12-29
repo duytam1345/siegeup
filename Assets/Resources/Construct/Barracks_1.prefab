@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6710417181304438923}
   - component: {fileID: 3012967834353744206}
   - component: {fileID: 4908854328203713940}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Barracks_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}

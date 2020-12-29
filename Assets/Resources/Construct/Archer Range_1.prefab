@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6710417181304438923}
   - component: {fileID: 8504177187502573467}
   - component: {fileID: 7128172299343337457}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Archer Range_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}

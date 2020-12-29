@@ -59,6 +59,9 @@ public class Manager : MonoBehaviour
     public GameObject currentToBuild;
     public bool firstMouseDown;
     public GameObject btnCancelBuild;
+    public GameObject btnApplyBuild;
+
+    public bool setCurrentBuid;
 
     public GameObject infoPanel;
     public Text textInfoPanel;
@@ -140,17 +143,7 @@ public class Manager : MonoBehaviour
 
         MoveCamera();
 
-        if (currentToBuild)
-        {
-            if (!MouseOnUI())
-            {
-                RaycastHit hit;
-                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 1000, LayerMask.GetMask("Nav")))
-                {
-                    currentToBuild.transform.position = hit.point;
-                }
-            }
-        }
+
 
         if (isPause)
         {
@@ -165,12 +158,35 @@ public class Manager : MonoBehaviour
                 return;
             }
 
+            if (currentToBuild && !setCurrentBuid)
+            {
+                RaycastHit hit;
+                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
+                {
+                    if (hit.collider.gameObject.layer == 10)
+                    {
+                        setCurrentBuid = true;
+                        return;
+                    }
+                }
+            }
+
             startPosMouseDown = Input.mousePosition;
             mousePosOrigin = cam.transform.position;
         }
 
         if (Input.GetMouseButton(0))
         {
+            if (setCurrentBuid)
+            {
+                RaycastHit hit;
+                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 1000, LayerMask.GetMask("Nav")))
+                {
+                    currentToBuild.transform.position = hit.point;
+                    return;
+                }
+            }
+
             if (isMultiSelectMode)
             {
                 if (startPosMouseDown != Vector2.zero && !currentToBuild)
@@ -186,6 +202,9 @@ public class Manager : MonoBehaviour
 
                     Vector3 pos = cam.transform.position;
 
+                    float camSpeed = (float)MasterManager.master.cameraSpeed / (float)100;
+                    dir *= (camSpeed);
+
                     cam.transform.position = (new Vector3(dir.x, 0, dir.y) / 50) + mousePosOrigin;
                 }
             }
@@ -193,79 +212,22 @@ public class Manager : MonoBehaviour
 
         if (Input.GetMouseButtonUp(0))
         {
-            if (currentToBuild && !MouseOnUI())
+            if (setCurrentBuid)
             {
-                if (firstMouseDown)
-                {
-                    firstMouseDown = false;
-                }
-                else
-                {
-                    if (currentToBuild.GetComponent<Building>().OnClickBuild())
-                    {
-                        int r = Random.Range(5, 20);
-                        float minX = currentToBuild.transform.position.x - 2;
-                        float minY = currentToBuild.transform.position.z - 2;
-                        float maxX = currentToBuild.transform.position.x + 2;
-                        float maxY = currentToBuild.transform.position.z + 2;
-
-                        for (int i = 0; i < r; i++)
-                        {
-                            CreateSmokeEffect(new Vector3(Random.Range(minX, maxX), 1, Random.Range(minY, maxY)));
-                        }
-
-                        switch (currentToBuild.GetComponent<Building>().n)
-                        {
-                            case "Archer Range":
-                                resourcesGame._gold -= 10;
-                                resourcesGame._wood -= 20;
-                                break;
-                            case "Farm":
-                                resourcesGame._wood -= 40;
-                                break;
-                            case "House":
-                                resourcesGame._wood -= 30;
-                                break;
-                            case "Barracks":
-                                resourcesGame._gold -= 20;
-                                resourcesGame._metal -= 20;
-                                break;
-                        }
-
-                        UpdateresourcesGame();
-
-                        startPosMouseDown = Vector2.zero;
-
-                        currentToBuild.GetComponent<Building>().SetConstruct();
-
-                        GameObject g = Instantiate(Resources.Load("Construct/" + currentToBuild.GetComponent<Building>().n + "_2") as GameObject, currentToBuild.transform.position, Quaternion.identity);
-
-                        Destroy(currentToBuild);
-                        btnCancelBuild.SetActive(false);
-                        buildPanel.SetActive(true);
-                        return;
-                    }
-                }
+                setCurrentBuid = false;
             }
 
-            if (MouseOnUI())
-            {
-                return;
-            }
 
             endPosMouseUp = Input.mousePosition;
 
             //Kéo chọn
             if (isMultiSelectMode)
             {
-                Vector2 endPosMouseDown = Input.mousePosition;
-
                 if (startPosMouseDown == Vector2.zero)
                 {
                     return;
                 }
 
-                //drag
                 descriptionBtn.SetActive(false);
 
 
@@ -283,12 +245,12 @@ public class Manager : MonoBehaviour
 
 
                 Vector2 min = new Vector2(
-                        (startPosMouseDown.x < endPosMouseDown.x ? startPosMouseDown.x : endPosMouseDown.x),
-                        (startPosMouseDown.y < endPosMouseDown.y ? startPosMouseDown.y : endPosMouseDown.y));
+                        (startPosMouseDown.x < endPosMouseUp.x ? startPosMouseDown.x : endPosMouseUp.x),
+                        (startPosMouseDown.y < endPosMouseUp.y ? startPosMouseDown.y : endPosMouseUp.y));
 
                 Vector2 max = new Vector2(
-                    (startPosMouseDown.x > endPosMouseDown.x ? startPosMouseDown.x : endPosMouseDown.x),
-                    (startPosMouseDown.y > endPosMouseDown.y ? startPosMouseDown.y : endPosMouseDown.y));
+                    (startPosMouseDown.x > endPosMouseUp.x ? startPosMouseDown.x : endPosMouseUp.x),
+                    (startPosMouseDown.y > endPosMouseUp.y ? startPosMouseDown.y : endPosMouseUp.y));
 
                 foreach (var item in unitRts)
                 {
@@ -326,18 +288,18 @@ public class Manager : MonoBehaviour
                         {
                             Unit unit = hit.collider.gameObject.GetComponent<Unit>();
 
-                            if (unit._property.colorTeam == Team.Red || unit._property.colorTeam == Team.None)
+                            if (listSelected.Count > 0)
                             {
-                                if (listSelected.Count > 0)
+                                foreach (var item in listSelected)
                                 {
-                                    foreach (var item in listSelected)
-                                    {
-                                        item.ActTo(unit);
+                                    item.ActTo(unit);
 
-                                        descriptionBtn.SetActive(false);
-                                    }
+                                    descriptionBtn.SetActive(false);
                                 }
-                                else
+                            }
+                            else
+                            {
+                                if (unit._property.colorTeam == Team.Red || unit._property.colorTeam == Team.None)
                                 {
                                     listSelected.Clear();
                                     listSelected.Add(unit);
@@ -542,9 +504,16 @@ public class Manager : MonoBehaviour
                 }
 
                 currentToBuild = Instantiate(Resources.Load("Construct/" + n + "_1") as GameObject, Vector2.zero, Quaternion.identity);
+
+                RaycastHit hit;
+                Physics.Raycast(Camera.main.ScreenPointToRay(new Vector2(Screen.width / 2, Screen.height / 2)), out hit);
+                currentToBuild.transform.position = new Vector3(hit.point.x, 0, hit.point.z);
+
                 currentToBuild.GetComponent<Building>().n = n;
 
                 btnCancelBuild.SetActive(true);
+                btnApplyBuild.SetActive(true);
+                multiSelectBtn.gameObject.SetActive(false);
                 buildPanel.SetActive(false);
                 buildBtn.SetActive(false);
 
@@ -692,7 +661,62 @@ public class Manager : MonoBehaviour
         DestroyImmediate(currentToBuild);
 
         btnCancelBuild.SetActive(false);
+        btnApplyBuild.SetActive(false);
         buildPanel.SetActive(true);
+    }
+
+    public void ApplyBuild()
+    {
+        if (currentToBuild)
+        {
+            if (currentToBuild.GetComponent<Building>().OnClickBuild())
+            {
+                int r = Random.Range(5, 20);
+                float minX = currentToBuild.transform.position.x - 2;
+                float minY = currentToBuild.transform.position.z - 2;
+                float maxX = currentToBuild.transform.position.x + 2;
+                float maxY = currentToBuild.transform.position.z + 2;
+
+                for (int i = 0; i < r; i++)
+                {
+                    CreateSmokeEffect(new Vector3(Random.Range(minX, maxX), 1, Random.Range(minY, maxY)));
+                }
+
+                switch (currentToBuild.GetComponent<Building>().n)
+                {
+                    case "Archer Range":
+                        resourcesGame._gold -= 10;
+                        resourcesGame._wood -= 20;
+                        break;
+                    case "Farm":
+                        resourcesGame._wood -= 40;
+                        break;
+                    case "House":
+                        resourcesGame._wood -= 30;
+                        break;
+                    case "Barracks":
+                        resourcesGame._gold -= 20;
+                        resourcesGame._metal -= 20;
+                        break;
+                }
+
+                UpdateresourcesGame();
+
+                startPosMouseDown = Vector2.zero;
+
+                currentToBuild.GetComponent<Building>().SetConstruct();
+
+                GameObject g = Instantiate(Resources.Load("Construct/" + currentToBuild.GetComponent<Building>().n + "_2") as GameObject, currentToBuild.transform.position, Quaternion.identity);
+
+                Destroy(currentToBuild);
+                btnCancelBuild.SetActive(false);
+                btnApplyBuild.SetActive(false);
+                multiSelectBtn.gameObject.SetActive(true);
+                buildPanel.SetActive(true);
+                return;
+            }
+            //}
+        }
     }
 
     public void ClosePanelBtn(GameObject g)
@@ -914,7 +938,11 @@ public class Manager : MonoBehaviour
 
     public void OnValueChangeMusic(Scrollbar scrollbar)
     {
-        textMusic.text = Mathf.RoundToInt(scrollbar.value * 100) + "%";
+        int i = Mathf.RoundToInt(scrollbar.value * 100);
+
+        textMusic.text = i + "%";
+
+        MasterManager.master.SetMusic(i);
     }
 
     public void OnValueChangeSound(Scrollbar scrollbar)
@@ -931,6 +959,8 @@ public class Manager : MonoBehaviour
         int i = Mathf.RoundToInt((scrollbar.value + .5f) * 100);
 
         textCameraSpeed.text = i + "%";
+
+        MasterManager.master.cameraSpeed = i;
     }
 
     public void ExitBtn()
