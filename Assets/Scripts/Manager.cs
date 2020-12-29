@@ -77,6 +77,7 @@ public class Manager : MonoBehaviour
     public RectTransform ScrollViewNoti;
 
     public GameObject cam;
+    public Vector3 mousePosOrigin;
 
     public Text textTimeGame;
 
@@ -160,13 +161,12 @@ public class Manager : MonoBehaviour
         {
             if (MouseOnUI())
             {
+                startPosMouseDown = Vector2.zero;
                 return;
             }
 
-            if (isMultiSelectMode)
-            {
-                startPosMouseDown = Input.mousePosition;
-            }
+            startPosMouseDown = Input.mousePosition;
+            mousePosOrigin = cam.transform.position;
         }
 
         if (Input.GetMouseButton(0))
@@ -176,6 +176,17 @@ public class Manager : MonoBehaviour
                 if (startPosMouseDown != Vector2.zero && !currentToBuild)
                 {
                     SetSelectionBox(Input.mousePosition);
+                }
+            }
+            else
+            {
+                if (startPosMouseDown != Vector2.zero)
+                {
+                    Vector3 dir = (Vector3)startPosMouseDown - Input.mousePosition;
+
+                    Vector3 pos = cam.transform.position;
+
+                    cam.transform.position = (new Vector3(dir.x, 0, dir.y) / 50) + mousePosOrigin;
                 }
             }
         }
@@ -242,6 +253,9 @@ public class Manager : MonoBehaviour
                 return;
             }
 
+            endPosMouseUp = Input.mousePosition;
+
+            //Kéo chọn
             if (isMultiSelectMode)
             {
                 Vector2 endPosMouseDown = Input.mousePosition;
@@ -303,75 +317,91 @@ public class Manager : MonoBehaviour
             //Nhấp chọn
             else
             {
-                RaycastHit hit;
-                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
+                if (startPosMouseDown == endPosMouseUp)
                 {
-                    if (hit.collider.gameObject.layer == 9)
+                    RaycastHit hit;
+                    if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
                     {
-                        Unit unit = hit.collider.gameObject.GetComponent<Unit>();
-
-                        if (listSelected.Count > 0)
+                        if (hit.collider.gameObject.layer == 9)
                         {
-                            foreach (var item in listSelected)
-                            {
-                                item.ActTo(unit);
+                            Unit unit = hit.collider.gameObject.GetComponent<Unit>();
 
-                                descriptionBtn.SetActive(false);
+                            if (unit._property.colorTeam == Team.Red || unit._property.colorTeam == Team.None)
+                            {
+                                if (listSelected.Count > 0)
+                                {
+                                    foreach (var item in listSelected)
+                                    {
+                                        item.ActTo(unit);
+
+                                        descriptionBtn.SetActive(false);
+                                    }
+                                }
+                                else
+                                {
+                                    listSelected.Clear();
+                                    listSelected.Add(unit);
+
+                                    infoPanel.SetActive(true);
+                                    unit.OnSelect();
+
+                                    foreach (Transform item in contentInfoPanel)
+                                    {
+                                        Destroy(item.gameObject);
+                                    }
+
+                                    if (unit.GetComponent<UnitConstruct>())
+                                    {
+                                        unit.GetComponent<UnitConstruct>().ShowPanel();
+                                    }
+                                    descriptionBtn.SetActive(true);
+
+                                    buildPanel.SetActive(false);
+                                }
                             }
                         }
                         else
                         {
-                            listSelected.Clear();
-                            listSelected.Add(unit);
-
-                            infoPanel.SetActive(true);
-                            unit.OnSelect();
-
-                            foreach (Transform item in contentInfoPanel)
+                            if (listSelected.Count > 0)
                             {
-                                Destroy(item.gameObject);
-                            }
-
-                            unit.GetComponent<UnitConstruct>().ShowPanel();
-                            descriptionBtn.SetActive(true);
-
-                            buildPanel.SetActive(false);
-                        }
-                    }
-                    else
-                    {
-                        if (listSelected.Count > 0 && listSelected[0].GetComponent<UnitSoldier>())
-                        {
-
-                            int c = listSelected.Count;
-                            float sqrt = Mathf.Sqrt(c);
-                            while ((int)sqrt != sqrt)
-                            {
-                                c++;
-                                sqrt = Mathf.Sqrt(c);
-                            }
-
-                            List<Vector3> v = new List<Vector3>();
-                            for (int i = 0; i < sqrt; i++)
-                            {
-                                for (int j = 0; j < sqrt; j++)
+                                if (listSelected[0].GetComponent<UnitSoldier>())
                                 {
-                                    Vector3 newV = hit.point - listSelected[0].transform.position + new Vector3(i, 0, j);
-                                    v.Add(newV);
+                                    int c = listSelected.Count;
+                                    float sqrt = Mathf.Sqrt(c);
+                                    while ((int)sqrt != sqrt)
+                                    {
+                                        c++;
+                                        sqrt = Mathf.Sqrt(c);
+                                    }
+
+                                    List<Vector3> v = new List<Vector3>();
+                                    for (int i = 0; i < sqrt; i++)
+                                    {
+                                        for (int j = 0; j < sqrt; j++)
+                                        {
+                                            Vector3 newV = hit.point - listSelected[0].transform.position + new Vector3(i, 0, j);
+                                            v.Add(newV);
+                                        }
+                                    }
+
+                                    for (int i = 0; i < listSelected.Count; i++)
+                                    {
+                                        listSelected[i].SetMove(listSelected[0].transform.position + v[i]);
+                                    }
+                                }
+                                else if (listSelected[0].GetComponent<UnitConstruct>())
+                                {
+                                    infoPanel.SetActive(false);
+                                    DeSelectAll();
+                                }
+                                else
+                                {
+                                    infoPanel.SetActive(false);
+                                    DeSelectAll();
                                 }
                             }
-
-                            for (int i = 0; i < listSelected.Count; i++)
-                            {
-                                listSelected[i].SetMove(listSelected[0].transform.position + v[i]);
-                            }
+                            descriptionBtn.SetActive(false);
                         }
-                        else if (listSelected.Count > 0 && listSelected[0].GetComponent<UnitConstruct>())
-                        {
-                            infoPanel.SetActive(false);
-                            DeSelectAll();
-                        }
-                        descriptionBtn.SetActive(false);
                     }
                 }
             }
@@ -715,10 +745,10 @@ public class Manager : MonoBehaviour
     {
         Transform noti = GameObject.Find("Noti").transform;
 
-        noti.GetComponent<RectTransform>().sizeDelta = new Vector2(0, Mathf.Clamp(noti.childCount * 40, 405, 40000));
-
         GameObject g = Instantiate(Resources.Load("UI/SlotNoti") as GameObject, noti);
         g.GetComponent<Text>().text = "[" + minute.ToString("00") + ":" + second.ToString("00") + "]" + s;
+
+        noti.GetComponent<RectTransform>().sizeDelta = new Vector2(0, Mathf.Clamp(noti.childCount * 30, 300, 30000));
     }
 
     public void CreateSlotMaterial(Transform trans, string s, int i)
@@ -781,11 +811,11 @@ public class Manager : MonoBehaviour
 
     public void BtnHideListNoti()
     {
-        if (ScrollViewNoti.anchoredPosition3D.x > -700)
+        if (ScrollViewNoti.anchoredPosition3D.x > -600)
         {
             StartCoroutine(HideListNotiCo());
         }
-        else if (ScrollViewNoti.anchoredPosition3D.x < -1200)
+        else if (ScrollViewNoti.anchoredPosition3D.x < -900)
         {
             StartCoroutine(ShowListNotiCo());
         }
@@ -794,7 +824,7 @@ public class Manager : MonoBehaviour
     IEnumerator HideListNotiCo()
     {
         Vector3 v = ScrollViewNoti.anchoredPosition3D;
-        while (ScrollViewNoti.anchoredPosition3D.x > -1200)
+        while (ScrollViewNoti.anchoredPosition3D.x > -1000)
         {
             v.x -= 20;
             ScrollViewNoti.anchoredPosition3D = v;
@@ -805,7 +835,7 @@ public class Manager : MonoBehaviour
     IEnumerator ShowListNotiCo()
     {
         Vector3 v = ScrollViewNoti.anchoredPosition3D;
-        while (ScrollViewNoti.anchoredPosition3D.x < -700)
+        while (ScrollViewNoti.anchoredPosition3D.x < -550)
         {
             v.x += 20;
             ScrollViewNoti.anchoredPosition3D = v;
