@@ -11656,7 +11656,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 15
+  orthographic size: 30
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -16708,7 +16708,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1600, y: 200}
+  m_SizeDelta: {x: 1600, y: 250}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &869197699
 MonoBehaviour:
@@ -26152,7 +26152,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nameLevel: Level1
   isPause: 0
-  testMode: 0
+  testMode: 1
   onMenu: 0
   boxSelection: {fileID: 1003290601}
   listSelected: []
@@ -26197,6 +26197,7 @@ MonoBehaviour:
   winLosePanel: {fileID: 329024968}
   textWinLose: {fileID: 1464978590}
   ScrollViewNoti: {fileID: 1234962909}
+  originDistanceTwoTouch: 0
   cam: {fileID: 0}
   mousePosOrigin: {x: 0, y: 0, z: 0}
   textTimeGame: {fileID: 880966435}
@@ -39711,7 +39712,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1997149984
 RectTransform:
   m_ObjectHideFlags: 0

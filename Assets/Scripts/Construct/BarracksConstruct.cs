@@ -41,7 +41,7 @@ public class BarracksConstruct : UnitConstruct
     {
         GameObject g = Instantiate(Resources.Load("UI/Slot Button") as GameObject, Manager.manager.contentInfoPanel);
         g.GetComponent<Button>().onClick.AddListener(delegate { OnClickCreateSpearman(); });
-        g.transform.GetChild(0).GetComponent<Text>().text = "Lính giáo";
+        g.transform.GetChild(0).GetChild(0).GetComponent<Text>().text = "Lính giáo";
 
         createSpearman.fillAmount = g.transform.GetChild(1).GetChild(0).GetComponent<Image>();
         createSpearman.textAmount = g.transform.GetChild(1).GetChild(1).GetComponent<Text>();
@@ -51,7 +51,7 @@ public class BarracksConstruct : UnitConstruct
 
         GameObject g2 = Instantiate(Resources.Load("UI/Slot Button") as GameObject, Manager.manager.contentInfoPanel);
         g2.GetComponent<Button>().onClick.AddListener(delegate { OnClickCreateSwordsman(); });
-        g2.transform.GetChild(0).GetComponent<Text>().text = "Lính kiếm";
+        g2.transform.GetChild(0).GetChild(0).GetComponent<Text>().text = "Lính kiếm";
 
         Manager.manager.CreateSlotMaterial(g2.transform.GetChild(2), "Sắt", 10);
         Manager.manager.CreateSlotMaterial(g2.transform.GetChild(2), "Vàng", 10);
@@ -118,6 +118,14 @@ public class BarracksConstruct : UnitConstruct
 
     public override void TakeDamage(Property property)
     {
+        if (Manager.manager.testMode)
+        {
+            if (_property.colorTeam == Team.Red)
+            {
+                return;
+            }
+        }
+
         float before = (float)_property.curHealth / (float)_property.maxHealth * 100;
         float after = ((float)_property.curHealth - (float)property.dmgConstruct) / (float)_property.maxHealth * 100;
 

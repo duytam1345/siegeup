@@ -41,7 +41,7 @@ public class ArcherRangeConstruct : UnitConstruct
     {
         GameObject g = Instantiate(Resources.Load("UI/Slot Button") as GameObject, Manager.manager.contentInfoPanel);
         g.GetComponent<Button>().onClick.AddListener(delegate { OnClickCreateArcherman(); });
-        g.transform.GetChild(0).GetComponent<Text>().text = "Lính cung";
+        g.transform.GetChild(0).GetChild(0).GetComponent<Text>().text = "Lính cung";
 
         Manager.manager.CreateSlotMaterial(g.transform.GetChild(2), "Thực", 15);
         Manager.manager.CreateSlotMaterial(g.transform.GetChild(2), "Gỗ", 15);
@@ -51,7 +51,7 @@ public class ArcherRangeConstruct : UnitConstruct
 
         GameObject g2 = Instantiate(Resources.Load("UI/Slot Button") as GameObject, Manager.manager.contentInfoPanel);
         g2.GetComponent<Button>().onClick.AddListener(delegate { OnClickCreateCrossbowman(); });
-        g2.transform.GetChild(0).GetComponent<Text>().text = "Lính nỏ";
+        g2.transform.GetChild(0).GetChild(0).GetComponent<Text>().text = "Lính nỏ";
 
         Manager.manager.CreateSlotMaterial(g2.transform.GetChild(2), "Thực", 30);
         Manager.manager.CreateSlotMaterial(g2.transform.GetChild(2), "Sắt", 10);
@@ -110,6 +110,14 @@ public class ArcherRangeConstruct : UnitConstruct
 
     public override void TakeDamage(Property property)
     {
+        if (Manager.manager.testMode)
+        {
+            if (_property.colorTeam == Team.Red)
+            {
+                return;
+            }
+        }
+
         float before = (float)_property.curHealth / (float)_property.maxHealth * 100;
         float after = ((float)_property.curHealth - (float)property.dmgConstruct) / (float)_property.maxHealth * 100;
 

@@ -67,6 +67,8 @@
     <Compile Include="Assets\NavMeshComponents\Scripts\NavMeshModifierVolume.cs" />
     <Compile Include="Assets\NavMeshComponents\Scripts\NavMeshSurface.cs" />
     <Compile Include="Assets\Scenes\StateExmaple2.cs" />
+    <Compile Include="Assets\Sci Fi Infoboxes\Temp\InputManager.cs" />
+    <Compile Include="Assets\Sci Fi Infoboxes\Temp\TestInput.cs" />
     <Compile Include="Assets\Scripts\Building.cs" />
     <Compile Include="Assets\Scripts\Bullet.cs" />
     <Compile Include="Assets\Scripts\Construct\ArcherRangeConstruct.cs" />
@@ -75,6 +77,7 @@
     <Compile Include="Assets\Scripts\Construct\FarmConstruct.cs" />
     <Compile Include="Assets\Scripts\Construct\HouseConstruct.cs" />
     <Compile Include="Assets\Scripts\Construct\UnitConstruct.cs" />
+    <Compile Include="Assets\Scripts\DetectTouchMovement.cs" />
     <Compile Include="Assets\Scripts\EnemyController.cs" />
     <Compile Include="Assets\Scripts\InfoLevel.cs" />
     <Compile Include="Assets\Scripts\MainMenu.cs" />
@@ -91,6 +94,7 @@
     <Compile Include="Assets\Scripts\Soldier\SpearmanSoldier.cs" />
     <Compile Include="Assets\Scripts\Soldier\SwordsmanSoldier.cs" />
     <Compile Include="Assets\Scripts\Soldier\UnitSoldier.cs" />
+    <Compile Include="Assets\Scripts\TouchMovement.cs" />
     <Compile Include="Assets\Scripts\TreeUnit.cs" />
     <Compile Include="Assets\Scripts\Unit.cs" />
     <Compile Include="Assets\SimpleMinMaxSlider\Scripts\MinMaxSliderAttribute.cs" />
