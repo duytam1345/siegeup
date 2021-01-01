@@ -16,12 +16,32 @@ public class Building : MonoBehaviour
     {
         meshRenderers = new List<MeshRenderer>();
 
-        foreach (Transform item in transform)
+        //foreach (Transform item in transform)
+        //{
+        //    if (item.GetComponent<MeshRenderer>())
+        //    {
+        //        meshRenderers.Add(item.GetComponent<MeshRenderer>());
+        //    }
+        //}
+
+        //if (n == "Barracks")
+        //{
+        //    foreach (Transform item in transform.GetChild(0).transform)
+        //    {
+        //        meshRenderers.Add(item.GetComponent<MeshRenderer>());
+        //    }
+        //}
+        //else if (n == "Archer Range")
+        //{
+        //    foreach (Transform item in transform.GetChild(0).transform)
+        //    {
+        //        meshRenderers.Add(item.GetComponent<MeshRenderer>());
+        //    }
+        //}
+
+        foreach (Transform item in transform.GetChild(0).transform)
         {
-            if (item.GetComponent<MeshRenderer>())
-            {
-                meshRenderers.Add(item.GetComponent<MeshRenderer>());
-            }
+            meshRenderers.Add(item.GetComponent<MeshRenderer>());
         }
 
         colliders = new List<Collider>();

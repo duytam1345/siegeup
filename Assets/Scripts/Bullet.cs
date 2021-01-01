@@ -11,17 +11,18 @@ public class Bullet : MonoBehaviour
 
     public Property property;
 
-    bool b;
+    bool b;//Effect
+
+    private void Start()
+    {
+        vTarget = transform.position + (unitTarget.transform.position - transform.position);
+        vTarget += (transform.position - vTarget).normalized * unitTarget.r;
+    }
 
     private void Update()
     {
         if (!b)
         {
-            if (unitTarget)
-            {
-                vTarget = new Vector3(unitTarget.transform.position.x, transform.position.y, unitTarget.transform.position.z);
-            }
-
             if (Vector3.Distance(transform.position, vTarget) > .1f)
             {
                 transform.position = Vector3.MoveTowards(transform.position, vTarget, speed * Time.deltaTime);
@@ -43,7 +44,7 @@ public class Bullet : MonoBehaviour
     {
         foreach (Transform item in transform)
         {
-            if(item.GetComponent<ParticleSystem>())
+            if (item.GetComponent<ParticleSystem>())
             {
                 item.GetComponent<ParticleSystem>().Stop();
                 return;

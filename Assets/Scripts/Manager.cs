@@ -102,6 +102,8 @@ public class Manager : MonoBehaviour
 
     public GameObject confirmExitPanel;
 
+    public Material[] materialsTeam;
+
     private void Awake()
     {
         if (manager == null)
@@ -682,25 +684,28 @@ public class Manager : MonoBehaviour
                     CreateSmokeEffect(new Vector3(Random.Range(minX, maxX), 1, Random.Range(minY, maxY)));
                 }
 
-                switch (currentToBuild.GetComponent<Building>().n)
+                if (!testMode)
                 {
-                    case "Archer Range":
-                        resourcesGame._gold -= 10;
-                        resourcesGame._wood -= 20;
-                        break;
-                    case "Farm":
-                        resourcesGame._wood -= 40;
-                        break;
-                    case "House":
-                        resourcesGame._wood -= 30;
-                        break;
-                    case "Barracks":
-                        resourcesGame._gold -= 20;
-                        resourcesGame._metal -= 20;
-                        break;
-                }
+                    switch (currentToBuild.GetComponent<Building>().n)
+                    {
+                        case "Archer Range":
+                            resourcesGame._gold -= 10;
+                            resourcesGame._wood -= 20;
+                            break;
+                        case "Farm":
+                            resourcesGame._wood -= 40;
+                            break;
+                        case "House":
+                            resourcesGame._wood -= 30;
+                            break;
+                        case "Barracks":
+                            resourcesGame._gold -= 20;
+                            resourcesGame._metal -= 20;
+                            break;
+                    }
 
-                UpdateresourcesGame();
+                    UpdateresourcesGame();
+                }
 
                 startPosMouseDown = Vector2.zero;
 

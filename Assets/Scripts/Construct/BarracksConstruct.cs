@@ -62,34 +62,42 @@ public class BarracksConstruct : UnitConstruct
 
     void OnClickCreateSpearman()
     {
-        if (Manager.manager.resourcesGame._wood >= 20 && Manager.manager.resourcesGame._gold >= 5)
+        if (!Manager.manager.testMode)
         {
-            Manager.manager.resourcesGame._wood -= 20;
-            Manager.manager.resourcesGame._gold -= 5;
-            Manager.manager.UpdateresourcesGame();
+            if (Manager.manager.resourcesGame._wood < 20 && Manager.manager.resourcesGame._gold < 5)
+            {
+                {
+                    Manager.manager.CreateSlotNoti(" Không đủ tài nguyên");
+                    return;
+                }
+            }
+        }
 
-            createSpearman.currentCount++;
-        }
-        else
-        {
-            Manager.manager.CreateSlotNoti(" Không đủ tài nguyên");
-        }
+
+        Manager.manager.resourcesGame._wood -= 20;
+        Manager.manager.resourcesGame._gold -= 5;
+        Manager.manager.UpdateresourcesGame();
+
+        createSpearman.currentCount++;
+
     }
 
     void OnClickCreateSwordsman()
     {
-        if (Manager.manager.resourcesGame._metal >= 10 && Manager.manager.resourcesGame._gold >= 10)
+        if (!Manager.manager.testMode)
         {
-            Manager.manager.resourcesGame._metal -= 10;
-            Manager.manager.resourcesGame._gold -= 10;
-            Manager.manager.UpdateresourcesGame();
+            if (Manager.manager.resourcesGame._metal < 10 && Manager.manager.resourcesGame._gold < 10)
+            {
+                Manager.manager.CreateSlotNoti("Không đủ tài nguyên");
+                return;
+            }
+        }
 
-            createSwordsman.currentCount++;
-        }
-        else
-        {
-            Manager.manager.CreateSlotNoti("Không đủ tài nguyên");
-        }
+        Manager.manager.resourcesGame._metal -= 10;
+        Manager.manager.resourcesGame._gold -= 10;
+        Manager.manager.UpdateresourcesGame();
+
+        createSwordsman.currentCount++;
     }
 
     void CreateSpearman()

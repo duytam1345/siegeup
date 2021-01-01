@@ -8,6 +8,9 @@ public class PeasantSoldier : UnitSoldier
     public int curContain;
     public int maxContain = 5;
 
+    public SkinnedMeshRenderer thisRenderer;
+    public Material[] materialsTeam;
+
     private void Update()
     {
         if (healthBar)
@@ -219,5 +222,28 @@ public class PeasantSoldier : UnitSoldier
 
         _property.curHealth -= property.dmgSoldier;
         UpdateHealthBar();
+    }
+
+    public override void SetColorTeam()
+    {
+        switch (_property.colorTeam)
+        {
+            case Team.Red:
+                thisRenderer.material = materialsTeam[0];
+                break;
+            case Team.Green:
+                thisRenderer.material = materialsTeam[1];
+                break;
+            case Team.Blue:
+                break;
+            case Team.Yellow:
+                break;
+            case Team.Pink:
+                break;
+            case Team.Gray:
+                break;
+            case Team.None:
+                break;
+        }
     }
 }

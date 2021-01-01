@@ -441,7 +441,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 5561349426305759274, guid: a9d56aa24b1a0f94b8f487a6af330dd8, type: 3}
+  - {fileID: 2100000, guid: 5b48619fd9ad7ea4bb40e31bb5f57751, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -846,10 +846,15 @@ MonoBehaviour:
   agent: {fileID: 0}
   mission: 0
   vMission: {x: 0, y: 0, z: 0}
+  anim: {fileID: 0}
   tToGet: 1
   tToGetSecond: 0
   curContain: 0
   maxContain: 5
+  thisRenderer: {fileID: 2471283465008002562}
+  materialsTeam:
+  - {fileID: 2100000, guid: 5b48619fd9ad7ea4bb40e31bb5f57751, type: 2}
+  - {fileID: 2100000, guid: 7af18af02dba5ca439b5c95b7ea2569c, type: 2}
 --- !u!195 &8088123488658683890
 NavMeshAgent:
   m_ObjectHideFlags: 0

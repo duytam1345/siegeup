@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class ArcherSoldier : UnitSoldier
 {
+    public MeshRenderer thisRenderer;
+    public Material[] materialsTeam;
+
     private void Update()
     {
         if (healthBar)
@@ -50,7 +53,7 @@ public class ArcherSoldier : UnitSoldier
             case State.Move:
                 if (tToCheckNearEnemySecond <= 0)
                 {
-                    Unit u = GetNearestEnemy(10);
+                    Unit u = GetNearestEnemy(20);
 
                     if (u)
                     {
@@ -91,7 +94,7 @@ public class ArcherSoldier : UnitSoldier
             case State.MoveFight:
                 if (targetAttack)
                 {
-                    if (Vector3.Distance(transform.position, targetAttack.transform.position) > 8)
+                    if (Vector3.Distance(transform.position, targetAttack.transform.position) > 8 + targetAttack.r)
                     {
                         MoveTo(targetAttack.transform.position);
                     }
@@ -109,7 +112,7 @@ public class ArcherSoldier : UnitSoldier
             case State.Fight:
                 if (targetAttack)
                 {
-                    if (Vector3.Distance(transform.position, targetAttack.transform.position) <= 8)
+                    if (Vector3.Distance(transform.position, targetAttack.transform.position) <= 8 + targetAttack.r)
                     {
                         if (Attack1())
                         {
@@ -137,5 +140,28 @@ public class ArcherSoldier : UnitSoldier
 
         _property.curHealth -= property.dmgSoldier;
         UpdateHealthBar();
+    }
+
+    public override void SetColorTeam()
+    {
+        switch (_property.colorTeam)
+        {
+            case Team.Red:
+                thisRenderer.material = materialsTeam[0];
+                break;
+            case Team.Green:
+                thisRenderer.material = materialsTeam[1];
+                break;
+            case Team.Blue:
+                break;
+            case Team.Yellow:
+                break;
+            case Team.Pink:
+                break;
+            case Team.Gray:
+                break;
+            case Team.None:
+                break;
+        }
     }
 }

@@ -10,6 +10,9 @@ public class SwordsmanSoldier : UnitSoldier
     public int curContain;
     public int maxContain = 5;
 
+    public MeshRenderer[] thisRenderer;
+    public Material[] materialsTeam;
+
     private void Update()
     {
         if (healthBar)
@@ -92,7 +95,7 @@ public class SwordsmanSoldier : UnitSoldier
             case State.MoveFight:
                 if (targetAttack)
                 {
-                    if (Vector3.Distance(transform.position, targetAttack.transform.position) > 3)
+                    if (Vector3.Distance(transform.position, targetAttack.transform.position) > 3 + targetAttack.r)
                     {
                         MoveTo(targetAttack.transform.position);
                     }
@@ -110,9 +113,16 @@ public class SwordsmanSoldier : UnitSoldier
             case State.Fight:
                 if (targetAttack)
                 {
-                    if (Attack1())
+                    if (Vector3.Distance(transform.position, targetAttack.transform.position) <= 3 + targetAttack.r)
                     {
-                        Attack2(targetAttack);
+                        if (Attack1())
+                        {
+                            Attack2(targetAttack);
+                        }
+                    }
+                    else
+                    {
+                        _property.state = State.None;
                     }
                 }
                 else
@@ -130,5 +140,34 @@ public class SwordsmanSoldier : UnitSoldier
 
         _property.curHealth -= property.dmgSoldier;
         UpdateHealthBar();
+    }
+
+    public override void SetColorTeam()
+    {
+        switch (_property.colorTeam)
+        {
+            case Team.Red:
+                foreach (var item in thisRenderer)
+                {
+                    item.material = materialsTeam[0];
+                }
+                break;
+            case Team.Green:
+                foreach (var item in thisRenderer)
+                {
+                    item.material = materialsTeam[1];
+                }
+                break;
+            case Team.Blue:
+                break;
+            case Team.Yellow:
+                break;
+            case Team.Pink:
+                break;
+            case Team.Gray:
+                break;
+            case Team.None:
+                break;
+        }
     }
 }

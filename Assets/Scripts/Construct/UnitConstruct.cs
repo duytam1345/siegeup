@@ -66,6 +66,8 @@ public class UnitConstruct : Unit
 
     public virtual void ShowPanel() { }
 
+    public MeshRenderer thisRenderer;
+
     public void CheckToEffectFire(int b, int a)
     {
         Vector3 v = transform.position;
@@ -84,6 +86,32 @@ public class UnitConstruct : Unit
         else if (b >= 25 && a < 25)
         {
             Manager.manager.CreateFireEffect(v, transform.GetChild(2));
+        }
+    }
+
+    public override void SetColorTeam()
+    {
+        if (thisRenderer && Manager.manager)
+        {
+            switch (_property.colorTeam)
+            {
+                case Team.Red:
+                    thisRenderer.material = Manager.manager.materialsTeam[0];
+                    break;
+                case Team.Green:
+                    thisRenderer.material = Manager.manager.materialsTeam[1];
+                    break;
+                case Team.Blue:
+                    break;
+                case Team.Yellow:
+                    break;
+                case Team.Pink:
+                    break;
+                case Team.Gray:
+                    break;
+                case Team.None:
+                    break;
+            }
         }
     }
 }

@@ -144,41 +144,41 @@ public class Unit : MonoBehaviour
 
     public virtual void MoveTo(Vector3 v) { }
 
-    public void SetColorTeam()
+    public virtual void SetColorTeam()
     {
-        Material m = null;
+        //Material m = null;
 
-        switch (_property.colorTeam)
-        {
-            case Team.Red:
-                m = Resources.Load("Material/Color/Red") as Material;
-                break;
-            case Team.Green:
-                m = Resources.Load("Material/Color/Green") as Material;
-                break;
-            case Team.Blue:
-                m = Resources.Load("Material/Color/Blue") as Material;
-                break;
-            case Team.Yellow:
-                m = Resources.Load("Material/Color/Yellow") as Material;
-                break;
-            case Team.Pink:
-                m = Resources.Load("Material/Color/Pink") as Material;
-                break;
-            case Team.Gray:
-                m = Resources.Load("Material/Color/Gray") as Material;
-                break;
-            case Team.None:
-                break;
-        }
+        //switch (_property.colorTeam)
+        //{
+        //    case Team.Red:
+        //        m = Resources.Load("Material/Color/Red") as Material;
+        //        break;
+        //    case Team.Green:
+        //        m = Resources.Load("Material/Color/Green") as Material;
+        //        break;
+        //    case Team.Blue:
+        //        m = Resources.Load("Material/Color/Blue") as Material;
+        //        break;
+        //    case Team.Yellow:
+        //        m = Resources.Load("Material/Color/Yellow") as Material;
+        //        break;
+        //    case Team.Pink:
+        //        m = Resources.Load("Material/Color/Pink") as Material;
+        //        break;
+        //    case Team.Gray:
+        //        m = Resources.Load("Material/Color/Gray") as Material;
+        //        break;
+        //    case Team.None:
+        //        break;
+        //}
 
-        if (m != null)
-        {
-            foreach (var item in meshRenderers)
-            {
-                item.material = m;
-            }
-        }
+        //if (m != null)
+        //{
+        //    foreach (var item in meshRenderers)
+        //    {
+        //        item.material = m;
+        //    }
+        //}
     }
 
     public virtual void ActTo(Unit unit) { }
