@@ -80,7 +80,12 @@ public class Manager : MonoBehaviour
 
     public RectTransform ScrollViewNoti;
 
+    public GameObject fullMapPanel;
+
+
     public float originDistanceTwoTouch;
+
+    public InputManager.MouseState mouseState;
 
     public GameObject cam;
     public Vector3 mousePosOrigin;
@@ -106,6 +111,8 @@ public class Manager : MonoBehaviour
     public GameObject confirmExitPanel;
 
     public Material[] materialsTeam;
+
+    public TouchMovement touchMovement;
 
     private void Awake()
     {
@@ -134,6 +141,8 @@ public class Manager : MonoBehaviour
 
     private void Update()
     {
+        mouseState = InputManager.GetMouseState();
+
         if (isPause)
         {
             return;
@@ -150,92 +159,69 @@ public class Manager : MonoBehaviour
 
         //MoveCameraAndroid();
 
-        if (Input.touchCount > 1)
+        if (mouseState == InputManager.MouseState.MouseDown)
         {
-            Vector2 touch0, touch1;
-            float distance;
-            touch0 = Input.GetTouch(0).position;
-            touch1 = Input.GetTouch(1).position;
-            distance = Vector2.Distance(touch0, touch1);
-        }
-        else
-        {
-            if (Input.GetMouseButtonDown(0))
+            if (MouseOnUI())
             {
-                if (MouseOnUI())
-                {
-                    startPosMouseDown = Vector2.zero;
-                    return;
-                }
-
-                if (currentToBuild && !setCurrentBuid)
-                {
-                    RaycastHit hit;
-                    if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
-                    {
-                        if (hit.collider.gameObject.layer == 10)
-                        {
-                            setCurrentBuid = true;
-                            return;
-                        }
-                    }
-                }
-
-                startPosMouseDown = Input.mousePosition;
-                mousePosOrigin = cam.transform.position;
+                startPosMouseDown = Vector2.zero;
+                return;
             }
 
-            if (Input.GetMouseButton(0))
+            if (currentToBuild && !setCurrentBuid)
             {
-                if (Input.GetKeyDown(KeyCode.Z))
+                RaycastHit hit;
+                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
                 {
-                    Vector3 centerScreen = new Vector3(Screen.width / 2, Screen.height / 2);
-
-                    originDistanceTwoTouch = Vector2.Distance(centerScreen, Input.mousePosition);
-                }
-                if (Input.GetKey(KeyCode.Z))
-                {
-                    print(originDistanceTwoTouch);
-                }
-                if (Input.GetKeyUp(KeyCode.Z))
-                {
-                    originDistanceTwoTouch = 0;
-                }
-
-                if (setCurrentBuid)
-                {
-                    RaycastHit hit;
-                    if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 1000, LayerMask.GetMask("Nav")))
+                    if (hit.collider.gameObject.layer == 10)
                     {
-                        currentToBuild.transform.position = hit.point;
+                        setCurrentBuid = true;
                         return;
                     }
                 }
+            }
 
-                if (isMultiSelectMode)
+            startPosMouseDown = Input.mousePosition;
+            mousePosOrigin = cam.transform.position;
+        }
+
+        if (mouseState == InputManager.MouseState.LeftDragging)
+        {
+            if (setCurrentBuid)
+            {
+                RaycastHit hit;
+                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 1000, LayerMask.GetMask("Nav")))
                 {
-                    if (startPosMouseDown != Vector2.zero && !currentToBuild)
-                    {
-                        SetSelectionBox(Input.mousePosition);
-                    }
-                }
-                else
-                {
-                    if (startPosMouseDown != Vector2.zero)
-                    {
-                        Vector3 dir = (Vector3)startPosMouseDown - Input.mousePosition;
-
-                        Vector3 pos = cam.transform.position;
-
-                        float camSpeed = (float)MasterManager.master.cameraSpeed / (float)100;
-                        dir *= (camSpeed);
-
-                        cam.transform.position = (new Vector3(dir.x, 0, dir.y) / 50) + mousePosOrigin;
-                    }
+                    currentToBuild.transform.position = hit.point;
+                    return;
                 }
             }
 
-            if (Input.GetMouseButtonUp(0))
+            if (isMultiSelectMode)
+            {
+                if (startPosMouseDown != Vector2.zero && !currentToBuild)
+                {
+                    SetSelectionBox(Input.mousePosition);
+                }
+            }
+            else
+            {
+                if (startPosMouseDown != Vector2.zero)
+                {
+                    Vector3 dir = (Vector3)startPosMouseDown - Input.mousePosition;
+
+                    Vector3 pos = cam.transform.position;
+
+                    float camSpeed = (float)MasterManager.master.cameraSpeed / (float)100;
+                    dir *= (camSpeed);
+
+                    cam.transform.position = (new Vector3(dir.x, 0, dir.y) / 50) + mousePosOrigin;
+                }
+            }
+        }
+
+        if (mouseState == InputManager.MouseState.LeftUp)
+        {
+            if (!MouseOnUI())
             {
                 if (setCurrentBuid)
                 {
@@ -442,13 +428,14 @@ public class Manager : MonoBehaviour
                                     }
                                     else if (listSelected[0].GetComponent<UnitConstruct>())
                                     {
-                                        infoPanel.SetActive(false);
+                                        print("a");
                                         DeSelectAll();
+                                        infoPanel.SetActive(false);
                                     }
                                     else
                                     {
-                                        infoPanel.SetActive(false);
                                         DeSelectAll();
+                                        infoPanel.SetActive(false);
                                     }
                                 }
                                 descriptionBtn.SetActive(false);
@@ -712,6 +699,10 @@ public class Manager : MonoBehaviour
 
     void MoveCamera()
     {
+        touchMovement.SetUpdate();
+        touchMovement.UpdateMoveCam();
+        touchMovement.UpdateZoomCam();
+
         if (Input.GetKey(KeyCode.Q))
         {
             Vector3 euler = cam.transform.eulerAngles;
@@ -840,6 +831,7 @@ public class Manager : MonoBehaviour
     public void ClosePanelBtn(GameObject g)
     {
         DeSelectAll();
+        infoPanel.SetActive(false);
 
         g.SetActive(false);
         buildBtn.SetActive(true);
@@ -1093,5 +1085,10 @@ public class Manager : MonoBehaviour
     public void NoExitBtn()
     {
         confirmExitPanel.SetActive(false);
+    }
+
+    public void ViewMapBtn()
+    {
+        fullMapPanel.SetActive(true);
     }
 }

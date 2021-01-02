@@ -36,106 +36,96 @@ public class TouchMovement : MonoBehaviour
 
     void Update()
     {
-        MouseState = InputManager.GetMouseState();
+        //MouseState = InputManager.GetMouseState();
 
-        text.text = mainCam.position.ToString();
+        //text.text = mainCam.position.ToString();
 
-        if (MouseState == InputManager.MouseState.BeginZoomTouch)
-        {
-            beginT.SetActive(true);
-        }
-        if (MouseState == InputManager.MouseState.EndZoomTouch)
-        {
-            endT.SetActive(true);
-        }
+        //if (MouseState == InputManager.MouseState.BeginZoomTouch)
+        //{
+        //    beginT.SetActive(true);
+        //}
+        //if (MouseState == InputManager.MouseState.EndZoomTouch)
+        //{
+        //    endT.SetActive(true);
+        //}
 
-        if (MouseState == InputManager.MouseState.MouseDown)
-        {
-            startPosMouseDown = Input.mousePosition;
-            startPosCam = mainCam.parent.position;
-        }
-
-#if UNITY_EDITOR
-
-        if (MouseState == InputManager.MouseState.LeftDragging && !Input.GetKey(KeyCode.A))
-        {
-            Vector3 dir = startPosMouseDown - Input.mousePosition;
-
-            dir *= (moveCamSpeed);
-
-            Vector3 pos = new Vector3(
-                Mathf.Clamp(((new Vector3(dir.x, 0, dir.y) / 50) + startPosCam).x, min.x, max.x),
-                0,
-                Mathf.Clamp(((new Vector3(dir.x, 0, dir.y) / 50) + startPosCam).z, min.y, max.y));
-
-            mainCam.parent.position = new Vector3(pos.x, 0, pos.z);
-        }
-
-        if (MouseState == InputManager.MouseState.MouseDown)
-        {
-            if (Input.GetKey(KeyCode.A))
-            {
-                SetOriginDistance();
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.A))
-        {
-            if (MouseState == InputManager.MouseState.LeftDragging)
-            {
-                SetOriginDistance();
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.A))
-        {
-            if (MouseState == InputManager.MouseState.MouseDown)
-            {
-                SetOriginDistance();
-            }
-        }
-
-        if (Input.GetMouseButtonUp(0) || Input.GetKeyUp(KeyCode.A))
-        {
-            startDistance = 0;
-            activeSet = false;
-        }
-
-        if (activeSet)
-        {
-            SetPosCam();
-        }
-#else
         
-#endif
-        if (MouseState == InputManager.MouseState.LeftDragging && Input.touchCount == 1)
-        {
-            Vector3 dir = startPosMouseDown - Input.mousePosition;
 
-            dir *= (moveCamSpeed);
+//#if UNITY_EDITOR
 
-            Vector3 pos = new Vector3(
-                Mathf.Clamp(((new Vector3(dir.x, 0, dir.y) / 50) + startPosCam).x, min.x, max.x),
-                0,
-                Mathf.Clamp(((new Vector3(dir.x, 0, dir.y) / 50) + startPosCam).z, min.y, max.y));
+//        if (MouseState == InputManager.MouseState.LeftDragging && !Input.GetKey(KeyCode.A))
+//        {
+//            Vector3 dir = startPosMouseDown - Input.mousePosition;
 
-            mainCam.parent.position = new Vector3(pos.x, 0, pos.z);
-        }
+//            dir *= (moveCamSpeed);
 
-        if (MouseState == InputManager.MouseState.BeginZoomTouch)
-        {
-            SetOriginDistance();
-        }
+//            Vector3 pos = new Vector3(
+//                Mathf.Clamp(((new Vector3(dir.x, 0, dir.y) / 50) + startPosCam).x, min.x, max.x),
+//                0,
+//                Mathf.Clamp(((new Vector3(dir.x, 0, dir.y) / 50) + startPosCam).z, min.y, max.y));
 
-        if (MouseState == InputManager.MouseState.EndZoomTouch)
-        {
-            startDistance = 0;
-            activeSet = false;
-        }
+//            mainCam.parent.position = new Vector3(pos.x, 0, pos.z);
+//        }
 
-        if (activeSet)
-        {
-            SetPosCam();
-        }
+//        if (MouseState == InputManager.MouseState.MouseDown)
+//        {
+//            if (Input.GetKey(KeyCode.A))
+//            {
+//                SetOriginDistance();
+//            }
+//        }
+//        else if (Input.GetKeyDown(KeyCode.A))
+//        {
+//            if (MouseState == InputManager.MouseState.LeftDragging)
+//            {
+//                SetOriginDistance();
+//            }
+//        }
+//        else if (Input.GetKeyDown(KeyCode.A))
+//        {
+//            if (MouseState == InputManager.MouseState.MouseDown)
+//            {
+//                SetOriginDistance();
+//            }
+//        }
 
+//        if (Input.GetMouseButtonUp(0) || Input.GetKeyUp(KeyCode.A))
+//        {
+//            startDistance = 0;
+//            activeSet = false;
+//        }
+//#else
+        
+//#endif
+//        if (MouseState == InputManager.MouseState.LeftDragging && Input.touchCount == 1)
+//        {
+//            Vector3 dir = startPosMouseDown - Input.mousePosition;
+
+//            dir *= (moveCamSpeed);
+
+//            Vector3 pos = new Vector3(
+//                Mathf.Clamp(((new Vector3(dir.x, 0, dir.y) / 50) + startPosCam).x, min.x, max.x),
+//                0,
+//                Mathf.Clamp(((new Vector3(dir.x, 0, dir.y) / 50) + startPosCam).z, min.y, max.y));
+
+//            mainCam.parent.position = new Vector3(pos.x, 0, pos.z);
+//        }
+
+//        if (MouseState == InputManager.MouseState.BeginZoomTouch)
+//        {
+//            SetOriginDistance();
+//        }
+
+//        if (MouseState == InputManager.MouseState.EndZoomTouch)
+//        {
+//            startDistance = 0;
+//            activeSet = false;
+//        }
+
+//        if (activeSet)
+//        {
+//            SetPosCam();
+//        }
     }
     void SetOriginDistance()
     {
@@ -171,5 +161,50 @@ public class TouchMovement : MonoBehaviour
         }
 
         mainCam.position = Vector3.MoveTowards(mainCam.position, newPos, 10);
+    }
+
+    public void SetUpdate()
+    {
+        if (MouseState == InputManager.MouseState.MouseDown)
+        {
+            startPosMouseDown = Input.mousePosition;
+            startPosCam = mainCam.parent.position;
+        }
+    }
+
+    public void UpdateMoveCam()
+    {
+        if (MouseState == InputManager.MouseState.LeftDragging && Input.touchCount == 1)
+        {
+            Vector3 dir = startPosMouseDown - Input.mousePosition;
+
+            dir *= (moveCamSpeed);
+
+            Vector3 pos = new Vector3(
+                Mathf.Clamp(((new Vector3(dir.x, 0, dir.y) / 50) + startPosCam).x, min.x, max.x),
+                0,
+                Mathf.Clamp(((new Vector3(dir.x, 0, dir.y) / 50) + startPosCam).z, min.y, max.y));
+
+            mainCam.parent.position = new Vector3(pos.x, 0, pos.z);
+        }
+    }
+
+    public void UpdateZoomCam()
+    {
+        if (MouseState == InputManager.MouseState.BeginZoomTouch)
+        {
+            SetOriginDistance();
+        }
+
+        if (MouseState == InputManager.MouseState.EndZoomTouch)
+        {
+            startDistance = 0;
+            activeSet = false;
+        }
+
+        if (activeSet)
+        {
+            SetPosCam();
+        }
     }
 }
